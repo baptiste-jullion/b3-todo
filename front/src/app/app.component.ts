@@ -10,4 +10,12 @@ import { RouterOutlet } from "@angular/router";
 })
 export class AppComponent {
 	title = "front";
+
+	ngOnInit() {
+		console.log("Component is mounted");
+	}
+
+	ngOnDestroy() {
+		console.log("Component is unmounted");
+	}
 }
