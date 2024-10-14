@@ -1,4 +1,13 @@
 <main class="main min-h-[100vh] flex flex-col">
+  <div class="flex flex-col p-4">
+    <create-note />
+    <div class="flex gap-4">
+      <ng-container *ngFor="let note of notes">
+        <note [title]="note.title" [content]="note.content" />
+      </ng-container>
+    </div>
+  </div>
+
   <footer class="mt-auto text-center p-4">
     Powered by MyDigitalSchool - Annecy
   </footer>
