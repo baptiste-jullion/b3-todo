@@ -1,0 +1,27 @@
+<mat-form-field class="example-form-field w-full" appearance="outline">
+  <input
+    matInput
+    type="text"
+    [(ngModel)]="value"
+    placeholder="Create new note..."
+    (keyup.enter)="handleNoteCreation('basic')"
+  />
+  <button
+    matSuffix
+    mat-icon-button
+    #toolip="matTooltip"
+    matTooltip="New list"
+    matTooltipPosition="below"
+  >
+    <mat-icon>check_box</mat-icon>
+  </button>
+  <button
+    matSuffix
+    mat-icon-button
+    #toolip="matTooltip"
+    matTooltip="New note with image"
+    matTooltipPosition="below"
+  >
+    <mat-icon>image</mat-icon>
+  </button>
+</mat-form-field>
