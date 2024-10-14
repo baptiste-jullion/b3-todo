@@ -17,15 +17,15 @@ npm i
 # Run project
 ```sh
 # front
-cd front && npm run dev
+npm run dev -w front
 ```
 
 ```sh
 # api
-cd api && node .
+npm run dev -w api
 ```
 
 ```sh
 # tests
-cd tests && node .
+npm run dev -w tests
 ```
