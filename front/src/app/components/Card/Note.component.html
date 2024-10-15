@@ -1,12 +1,15 @@
-<mat-card class="flex-1" [appearance]="'outlined'">
-  <mat-card-content>
+<mat-card [appearance]="'outlined'" [className]="note.backgroundColor">
+  <mat-card-content class="!relative">
     <mat-card-title-group>
       <mat-card-title>
-        {{ title }}
+        {{ note.title }}
       </mat-card-title>
       <mat-card-subtitle>
-        {{ content }}
+        {{ note.description }}
       </mat-card-subtitle>
     </mat-card-title-group>
+    <button mat-icon-button class="!absolute !right-1 !top-1" (click)="deleteTask(note.id)">
+      <mat-icon>delete</mat-icon>
+    </button>
   </mat-card-content>
 </mat-card>
