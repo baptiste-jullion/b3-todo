@@ -1,52 +1,37 @@
 import cors from "cors";
 import express from "express";
 import { v4 as uuidv4 } from "uuid";
+import type { Note } from "../shared/types/Note";
 
 const app = express();
+app.use(express.json());
 const port = 8080;
 
-interface Task {
-	id: string; // UUID
-	title: string;
-	description: string;
-}
-
-const tasks: Task[] = [
-	{
-		id: "a4d45f26-ca80-5f4a-93be-b1141980f5b3",
-		title: "Task 1",
-		description: "This is the first task",
-	},
-	{
-		id: "7b6f7e29-626c-540c-9aa9-599cb4effb69",
-		title: "Task 2",
-		description: "This is the second task",
-	},
-];
+const notes: Note[] = [];
 
 app.use(cors());
 
-app.get("/tasks", (_req, res) => {
-	res.status(200).send(tasks);
+app.get("/notes", (_req, res) => {
+	res.status(200).send(notes);
 });
 
-app.post("/tasks", (req, res) => {
-	const task: Omit<Task, "id"> = req.body;
-	tasks.push({
-		...task,
+app.post("/notes", (req, res) => {
+	const note: Omit<Note, "id"> = req.body;
+	notes.push({
+		...note,
 		id: uuidv4(),
 	});
-	res.status(201).send(task);
+	res.status(201).send(note);
 });
 
-app.delete("/tasks/:id", (req, res) => {
+app.delete("/notes/:id", (req, res) => {
 	const { id } = req.params;
-	const index = tasks.findIndex((task) => task.id === id);
+	const index = notes.findIndex((note) => note.id === id);
 	if (index === -1) {
-		res.status(404).send("Task not found");
+		res.status(404).send();
 		return;
 	}
-	tasks.splice(index, 1);
+	notes.splice(index, 1);
 	res.status(204).send();
 });
 
