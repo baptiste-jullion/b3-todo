@@ -1,26 +1,26 @@
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
-import { RouterOutlet } from "@angular/router";
 import { Note } from "./components/Card/Note.component";
 import { CreateNote } from "./components/Input/CreateNote.component";
+// biome-ignore lint/style/useImportType: <explanation>
+import { NoteService, type Note as NoteType } from "./services/Note.service";
 
 @Component({
 	selector: "app-root",
 	standalone: true,
-	imports: [RouterOutlet, CreateNote, Note, CommonModule],
+	imports: [CreateNote, Note, CommonModule],
 	templateUrl: "./app.component.html",
 })
 export class AppComponent {
-	notes: {
-		title: string;
-		content: string;
-	}[] = [];
+	notes: NoteType[] = [];
 
-	loadNotes() {
-		this.notes = JSON.parse(localStorage.getItem("notes") || "[]");
+	constructor(private noteService: NoteService) {}
+
+	async ngOnInit() {
+		await this.refreshNotes();
 	}
 
-	ngOnInit() {
-		this.loadNotes();
+	async refreshNotes() {
+		this.notes = await this.noteService.getNotes();
 	}
 }

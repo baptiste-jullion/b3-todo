@@ -1,9 +1,9 @@
 <main class="main min-h-[100vh] flex flex-col">
   <div class="flex flex-col p-4">
-    <create-note />
-    <div class="flex gap-4">
+    <create-note (noteCreated)="refreshNotes()" />
+    <div class="grid grid-cols-4 gap-4">
       <ng-container *ngFor="let note of notes">
-        <note [title]="note.title" [content]="note.content" />
+        <note [note]="note" (noteDeleted)="refreshNotes()" />
       </ng-container>
     </div>
   </div>
@@ -12,5 +12,3 @@
     Powered by MyDigitalSchool - Annecy
   </footer>
 </main>
-
-<router-outlet />
