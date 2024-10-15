@@ -1,21 +1,26 @@
+import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
-import { RouterOutlet } from "@angular/router";
+import { Note } from "./components/Card/Note.component";
+import { CreateNote } from "./components/Input/CreateNote.component";
+// biome-ignore lint/style/useImportType: <explanation>
+import { NoteService, type Note as NoteType } from "./services/Note.service";
 
 @Component({
 	selector: "app-root",
 	standalone: true,
-	imports: [RouterOutlet],
+	imports: [CreateNote, Note, CommonModule],
 	templateUrl: "./app.component.html",
-	styleUrl: "./app.component.css",
 })
 export class AppComponent {
-	title = "front";
+	notes: NoteType[] = [];
 
-	ngOnInit() {
-		console.log("Component is mounted");
+	constructor(private noteService: NoteService) {}
+
+	async ngOnInit() {
+		await this.refreshNotes();
 	}
 
-	ngOnDestroy() {
-		console.log("Component is unmounted");
+	async refreshNotes() {
+		this.notes = await this.noteService.getNotes();
 	}
 }

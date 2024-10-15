@@ -1,0 +1,11 @@
+<h2 mat-dialog-title>Reminder config</h2>
+<mat-dialog-content>
+  <mat-form-field>
+    <input matInput [(ngModel)]="date" [matDatepicker]="picker" />
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">No Thanks</button>
+  <button mat-button [mat-dialog-close]="" cdkFocusInitial>Ok</button>
+</mat-dialog-actions>

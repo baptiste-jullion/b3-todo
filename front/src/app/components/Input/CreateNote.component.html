@@ -1,0 +1,74 @@
+<mat-form-field class="example-form-field w-full" appearance="outline">
+  <input
+    matInput
+    type="text"
+    [(ngModel)]="title"
+    [placeholder]="displayFullCard ? 'Note title' : 'Create new note...'"
+    (focus)="handleFocus()"
+    [ngClass]="{
+      '!text-xl': displayFullCard,
+    }"
+  />
+  @if (displayFullCard) {
+    <textarea
+      class="!mt-4"
+      matInput
+      [(ngModel)]="description"
+      cdkTextareaAutosize
+      #autosize="cdkTextareaAutosize"
+      cdkAutosizeMinRows="4"
+      placeholder="Note description"
+    ></textarea>
+  }
+
+  <button
+    *ngIf="!displayFullCard"
+    matSuffix
+    mat-icon-button
+    #toolip="matTooltip"
+    matTooltip="New list"
+    matTooltipPosition="below"
+  >
+    <mat-icon>check_box</mat-icon>
+  </button>
+  <button
+    *ngIf="!displayFullCard"
+    matSuffix
+    mat-icon-button
+    #toolip="matTooltip"
+    matTooltip="New note with image"
+    matTooltipPosition="below"
+  >
+    <mat-icon>image</mat-icon>
+  </button>
+  <footer *ngIf="displayFullCard" class="flex items-center gap-1">
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="menu"
+      [class]="backgroundColor"
+      matTooltip="Change background color"
+    >
+      <mat-icon>palette</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      @if (backgroundColor !== "") {
+        <button mat-menu-item (click)="toggleBackgroundColor('')">
+          <mat-icon>circle</mat-icon>
+          <span>Default</span>
+        </button>
+      }
+      @for (color of colors; track color[0]) {
+        <button mat-menu-item (click)="toggleBackgroundColor(color[2])">
+          <mat-icon [class]="color[1]">circle</mat-icon>
+          <span>{{ color[0] }}</span>
+        </button>
+      }
+    </mat-menu>
+    <button mat-icon-button (click)="openReminderDialog()" matTooltip="Set a reminder">
+      <mat-icon>{{ date ? "edit_notifications" : "add_alert" }}</mat-icon>
+    </button>   
+    <button mat-flat-button class="!ml-auto" (click)="handleNoteCreation()">
+      Create
+    </button>
+  </footer>
+</mat-form-field>
