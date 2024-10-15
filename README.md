@@ -10,22 +10,18 @@ git clone https://github.com/baptiste-jullion/b3-todo.git
 ```
 
 ```sh
-# Install npm dependecies
-npm i
+# Install dependecies
+bun i
 ```
 
 # Run project
 ```sh
-# front
-npm run dev -w front
+```sh
+# front with bun
+cd front/ && bun dev
 ```
 
 ```sh
 # api
-npm run dev -w api
-```
-
-```sh
-# tests
-npm run dev -w tests
+cd api/ && bun .
 ```
