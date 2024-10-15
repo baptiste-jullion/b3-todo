@@ -27,7 +27,6 @@ export class NoteService {
 
 	async deleteNote(id: string): Promise<void> {
 		const url = `${this.apiUrl}/${id}`;
-		const response = await fetch(url, { method: "DELETE" });
-		return await response.json();
+		await fetch(url, { method: "DELETE" });
 	}
 }
