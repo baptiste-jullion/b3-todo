@@ -16,12 +16,8 @@ bun i
 
 # Run project
 ```sh
-```sh
-# front with bun
-cd front/ && bun dev
+bun --filter '*' dev
 ```
 
-```sh
-# api
-cd api/ && bun .
-```
+# Acces app
+Go to http://localhost:4200
