@@ -1,27 +1,29 @@
 {
-  "compilerOptions": {
-    // Enable latest features
-    "lib": ["ESNext", "DOM"],
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleDetection": "force",
-    "jsx": "react-jsx",
-    "allowJs": true,
+	"compilerOptions": {
+		"lib": ["ESNext", "DOM"],
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleDetection": "force",
+		"jsx": "react-jsx",
+		"allowJs": true,
 
-    // Bundler mode
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
-    "noEmit": true,
+		"moduleResolution": "Bundler", // Change this to Node for compatibility
+		"declaration": true, // Generate type declarations
+		"outDir": "./dist", // Output directory for compiled files
+		"rootDir": "./src", // Specify source code directory
+		"emitDeclarationOnly": true, // Emit only declaration files (optional)
 
-    // Best practices
-    "strict": true,
-    "skipLibCheck": true,
-    "noFallthroughCasesInSwitch": true,
+		"allowImportingTsExtensions": true,
+		"verbatimModuleSyntax": true,
 
-    // Some stricter flags (disabled by default)
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false
-  }
+		"strict": true,
+		"skipLibCheck": true,
+		"noFallthroughCasesInSwitch": true,
+
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"noPropertyAccessFromIndexSignature": false
+	},
+	"include": ["src/**/*.ts"], // Include all TypeScript files
+	"exclude": ["node_modules"] // Exclude node_modules
 }
