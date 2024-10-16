@@ -8,5 +8,9 @@
 	],
 	"devDependencies": {
 		"@biomejs/biome": "1.9.3"
+	},
+	"scripts": {
+		"setup": "rm node_modules -rf && bun i && cd api && npm link && cd ../front && npm link @b3-todo/api && cd ../api && bun run build && cd ../ && bun --filter '*' dev",
+		"dev": "bun --filter '*' dev"
 	}
 }

@@ -9,14 +9,12 @@ This mono repo contains multiple workspaces : **api**, **front** & **tests**
 git clone https://github.com/baptiste-jullion/b3-todo.git
 ```
 
-```sh
-# Install dependecies
-bun i
-```
-
 # Run project
 ```sh
-bun --filter '*' dev
+# for the first time
+bun run setup
+# already setup
+bun dev
 ```
 
 # Acces app
