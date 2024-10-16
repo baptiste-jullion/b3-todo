@@ -1,9 +1,10 @@
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
+import type { Note as NoteType } from "@b3-todo/api";
 import { Note } from "./components/Card/Note.component";
 import { CreateNote } from "./components/Input/CreateNote.component";
 // biome-ignore lint/style/useImportType: <explanation>
-import { NoteService, type Note as NoteType } from "./services/Note.service";
+import { NoteService } from "./services/Note.service";
 
 @Component({
 	selector: "app-root",

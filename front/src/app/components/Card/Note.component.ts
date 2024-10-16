@@ -8,7 +8,7 @@ import {
 	MatCardTitleGroup,
 } from "@angular/material/card";
 import { MatIcon } from "@angular/material/icon";
-import type { Note as NoteType } from "../../../../../shared/types/Note";
+import type { Note as NoteType } from "@b3-todo/api";
 // biome-ignore lint/style/useImportType: <explanation>
 import { NoteService } from "../../services/Note.service";
 
