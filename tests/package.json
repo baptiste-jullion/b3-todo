@@ -1,5 +1,5 @@
 {
-  "name": "tests",
+  "name": "@b3-todo/tests",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {

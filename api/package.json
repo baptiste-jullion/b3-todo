@@ -1,17 +1,24 @@
 {
-  "name": "api",
-  "module": "index.ts",
-  "type": "module",
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "@types/uuid": "^10.0.0",
-    "cors": "^2.8.5",
-    "express": "^4.21.1",
-    "uuid": "^10.0.0"
-  }
+	"name": "@b3-todo/api",
+	"version": "1.0.0",
+	"module": "index.ts",
+	"type": "module",
+	"types": "dist/types/index.d.ts",
+	"scripts": {
+		"dev": "bun --hot src/index.ts",
+		"build": "bunx tsc",
+		"dev:build": "bunx tsc --watch"
+	},
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"dependencies": {
+		"@types/uuid": "^10.0.0",
+		"cors": "^2.8.5",
+		"express": "^4.21.1",
+		"uuid": "^10.0.0"
+	}
 }

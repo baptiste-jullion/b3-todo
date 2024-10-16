@@ -23,7 +23,7 @@ export interface Reminder {
 
 @Component({
 	selector: "reminder-dialog",
-	templateUrl: "./ReminderDialog.component.html",
+	templateUrl: "ReminderDialog.component.html",
 	standalone: true,
 	providers: [provideNativeDateAdapter()],
 	imports: [

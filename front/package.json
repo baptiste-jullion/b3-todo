@@ -1,5 +1,5 @@
 {
-  "name": "front",
+  "name": "@b3-todo/front",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -11,6 +11,7 @@
   },
   "private": true,
   "dependencies": {
+    "@b3-todo/api": "1.0.0",
     "@angular/animations": "^18.2.0",
     "@angular/cdk": "^18.2.8",
     "@angular/common": "^18.2.0",

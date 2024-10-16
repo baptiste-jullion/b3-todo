@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 
-import type { Note } from "../../../../shared/types/Note";
-export type { Note };
+import type { Note } from "@b3-todo/api";
 
 @Injectable({
 	providedIn: "root",

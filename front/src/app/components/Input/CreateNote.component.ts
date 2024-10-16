@@ -19,8 +19,8 @@ import { MatInputModule } from "@angular/material/input";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatTooltipModule } from "@angular/material/tooltip";
 // biome-ignore lint/style/useImportType: <explanation>
-import { NoteService } from "../../services/Note.service";
-import { ReminderDialog } from "./ReminderDialog.component";
+import { NoteService } from "@s/Note.service";
+import { ReminderDialog } from "@c/Input/ReminderDialog.component";
 
 @Component({
 	standalone: true,
@@ -37,7 +37,7 @@ import { ReminderDialog } from "./ReminderDialog.component";
 		CommonModule,
 		MatDatepickerModule,
 	],
-	templateUrl: "./CreateNote.component.html",
+	templateUrl: "CreateNote.component.html",
 })
 export class CreateNote {
 	private _injector = inject(Injector);
