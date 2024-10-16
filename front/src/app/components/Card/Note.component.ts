@@ -10,7 +10,7 @@ import {
 import { MatIcon } from "@angular/material/icon";
 import type { Note as NoteType } from "@b3-todo/api";
 // biome-ignore lint/style/useImportType: <explanation>
-import { NoteService } from "../../services/Note.service";
+import { NoteService } from "@s/Note.service";
 
 @Component({
 	standalone: true,
@@ -25,7 +25,7 @@ import { NoteService } from "../../services/Note.service";
 		MatButtonModule,
 		MatIcon,
 	],
-	templateUrl: "./Note.component.html",
+	templateUrl: "Note.component.html",
 })
 export class Note {
 	@Input() note!: NoteType;
