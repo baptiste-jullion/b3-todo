@@ -1,13 +1,21 @@
 import { connectDB } from "@db/index";
+import router from "@r/router";
+import express from "express";
 
 connectDB();
 
-const server = Bun.serve({
-	async fetch(req) {
-		const url = new URL(req.url);
-		if (url.pathname === "/")
-			return new Response("Welcome to the movie database");
-		return new Response("404!");
-	},
+const port = process.env.API_PORT;
+
+if (!port) {
+	console.error("API_PORT is missing");
+	process.exit(1);
+}
+
+const app = express();
+app.use(express.json());
+
+app.use("/api", router);
+
+app.listen(port, () => {
+	console.log(`Server is running on http://localhost:${port}`);
 });
-console.log(`Listening on http://localhost:${server.port} ...`);
