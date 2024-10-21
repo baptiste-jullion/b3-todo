@@ -1,0 +1,13 @@
+# .github/labeler.yml
+
+# Label for API-related changes
+api:
+  - 'api/**'
+
+# Label for Frontend-related changes
+front:
+  - 'front/**'
+
+# Label for Test-related changes
+tests:
+  - 'tests/**'
