@@ -11,6 +11,8 @@ app.use(express.json());
 
 const notes: Note[] = [];
 
+console.log("hey !");
+
 app.get("/notes", (_req, res) => {
 	console.log("Received GET request for /notes");
 	res.status(200).send(notes);
