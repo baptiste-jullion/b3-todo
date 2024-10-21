@@ -1,29 +1,24 @@
 {
 	"compilerOptions": {
+		"baseUrl": ".",
+		"declaration": true,
 		"lib": ["ESNext", "DOM"],
-		"target": "ESNext",
 		"module": "ESNext",
-		"moduleDetection": "force",
-		"jsx": "react-jsx",
-		"allowJs": true,
-
-		"moduleResolution": "Bundler", // Change this to Node for compatibility
-		"declaration": true, // Generate type declarations
-		"outDir": "./dist", // Output directory for compiled files
-		"rootDir": "./src", // Specify source code directory
-		"emitDeclarationOnly": true, // Emit only declaration files (optional)
-
-		"allowImportingTsExtensions": true,
-		"verbatimModuleSyntax": true,
-
-		"strict": true,
-		"skipLibCheck": true,
+		"moduleResolution": "Node",
 		"noFallthroughCasesInSwitch": true,
-
-		"noUnusedLocals": false,
-		"noUnusedParameters": false,
-		"noPropertyAccessFromIndexSignature": false
+		"noPropertyAccessFromIndexSignature": false,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"outDir": "./dist", 
+		"paths": {
+			"@db/*": ["src/database/*"],
+			"@m/*": ["src/models/*"],
+			"@r/*": ["src/routes/*"]
+		},
+		"skipLibCheck": true,
+		"strict": true,
+		"target": "ESNext"
 	},
-	"include": ["src/**/*.ts"], // Include all TypeScript files
-	"exclude": ["node_modules"] // Exclude node_modules
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules"]
 }
