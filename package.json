@@ -1,16 +1,14 @@
 {
 	"name": "b3-todo",
 	"version": "1.0.0",
-	"workspaces": [
-		"front",
-		"api",
-		"tests"
-	],
+	"workspaces": ["front", "api", "tests"],
 	"devDependencies": {
-		"@biomejs/biome": "1.9.3"
+		"@biomejs/biome": "1.9.3",
+		"concurrently": "^9.0.1"
 	},
 	"scripts": {
-		"setup": "rm node_modules -rf && bun i && cd api && npm link && cd ../front && npm link @b3-todo/api && cd ../api && bun run build && cd ../ && bun --filter '*' dev",
-		"dev": "bun --filter '*' dev"
+		"setup": "rm node_modules -rf && bun i && bun dev",
+		"dev": "bun --filter '*' dev",
+		"api": "cd api && bun dev:api"
 	}
 }
