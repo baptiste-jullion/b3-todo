@@ -4,6 +4,12 @@ export default defineNuxtConfig({
 	devtools: { enabled: true },
 	css: ["~/assets/css/tailwind.css"],
 	modules: ["@nuxtjs/tailwindcss", "nuxtjs-naive-ui"],
+	imports: {
+		autoImport: false,
+	},
+	runtimeConfig: {
+		public: { API_BASE_URL: "http://localhost:54321/api" },
+	},
 	postcss: {
 		plugins: {
 			tailwindcss: {},
