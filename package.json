@@ -4,7 +4,9 @@
 	"workspaces": ["front", "api", "tests"],
 	"devDependencies": {
 		"@biomejs/biome": "1.9.3",
-		"concurrently": "^9.0.1"
+		"concurrently": "^9.0.1",
+		"prettier": "^3.3.3",
+		"prettier-plugin-tailwindcss": "^0.6.8"
 	},
 	"scripts": {
 		"setup": "rm node_modules -rf && bun i && bun dev",

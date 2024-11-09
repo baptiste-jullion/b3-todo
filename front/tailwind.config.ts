@@ -1,5 +1,10 @@
-module.exports = {
-	content: ["./src/**/*.{html,ts}"],
+export default {
+	content: [
+		"./components/**/*.vue",
+		"./layouts/**/*.vue",
+		"./pages/**/*.vue",
+		"./app.vue"
+	],
 	theme: {
 		extend: {},
 	},
