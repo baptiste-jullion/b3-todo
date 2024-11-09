@@ -16,6 +16,7 @@
 			"@m/*": ["src/models/*"],
 			"@r/*": ["src/routes/*"],
 			"@c/*": ["src/controllers/*"],
+			"@u": ["src/utils"]
 		},
 		"skipLibCheck": true,
 		"strict": true,
