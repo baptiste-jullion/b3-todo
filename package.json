@@ -12,5 +12,8 @@
 		"setup": "rm node_modules -rf && bun i && bun dev",
 		"dev": "bun --filter '*' dev",
 		"api": "cd api && bun dev:api"
+	},
+	"dependencies": {
+		"qs": "^6.13.0"
 	}
 }
