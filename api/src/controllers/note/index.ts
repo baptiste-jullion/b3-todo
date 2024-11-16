@@ -1,51 +1,81 @@
 import Note from "@m/Note";
+import {
+	APIError,
+	parseFilterFromRequest,
+	parsePaginationInfosFromRequest,
+	parseSelectedFieldsFromRequest,
+} from "@u";
 import type { Request, Response } from "express";
 
-export const getNotes = async (_req: Request, res: Response) => {
+export const getNotes = async (req: Request, res: Response) => {
 	try {
-		const notes = await Note.find();
-		res.json(notes);
+		const fields = parseSelectedFieldsFromRequest(req);
+		const { limit, page } = parsePaginationInfosFromRequest(req);
+		const filter = parseFilterFromRequest(req);
+
+		if (limit < 0 || page < 1)
+			throw new APIError(
+				400,
+				"Invalid pagination parameters. Allowed values are limit >= 0 and page >= 1",
+			);		
+
+		const count = await Note.countDocuments(filter);
+
+		if (count === 0 || (page - 1) * limit >= count) throw new APIError(404);
+
+		const notes = await Note.find(filter, fields)
+			.limit(limit)
+			.skip((page - 1) * limit)
+			.sort({ updatedAt: -1 });
+
+		res.json({
+			count,
+			has_previous: page > 1,
+			has_next: (page - 1) * limit + notes.length < count,
+			results: notes,
+		});
 	} catch (error) {
-		res.status(404).json({ message: "Notes not found" });
+		APIError.handleError(res, error);
 	}
 };
 
-export const getNoteById = async (_req: Request, _res: Response) => {
+export const getNoteById = async (req: Request, res: Response) => {
 	try {
-		const { id } = _req.params;
+		const { id } = req.params;
 		const note = await Note.findById(id);
-		_res.json(note);
+		if (!note) throw new APIError(404);
+		res.json(note);
 	} catch (error) {
-		_res.status(404).json({ message: "Note not found" });
+		APIError.handleError(res, error);
 	}
 };
 
-export const createNote = async (_req: Request, _res: Response) => {
+export const createNote = async (req: Request, res: Response) => {
 	try {
-		const note = new Note(_req.body);
+		const note = new Note(req.body);
 		await note.save();
-		_res.status(201).json(note);
+		res.status(201).json(note);
 	} catch (error) {
-		_res.status(400).json({ message: "Invalid note" });
+		res.status(400).json({ message: "Invalid note" });
 	}
 };
 
-export const updateNote = async (_req: Request, _res: Response) => {
+export const updateNote = async (req: Request, res: Response) => {
 	try {
-		const { id } = _req.params;
-		const note = await Note.findByIdAndUpdate(id, _req.body, { new: true });
-		_res.json(note);
+		const { id } = req.params;
+		const note = await Note.findByIdAndUpdate(id, req.body, { new: true });
+		res.json(note);
 	} catch (error) {
-		_res.status(404).json({ message: "Note not found" });
+		res.status(404).json({ message: "Note not found" });
 	}
 };
 
-export const deleteNote = async (_req: Request, _res: Response) => {
+export const deleteNote = async (req: Request, res: Response) => {
 	try {
-		const { id } = _req.params;
+		const { id } = req.params;
 		await Note.findByIdAndDelete(id);
-		_res.json({ message: "Note deleted" });
+		res.json({ message: "Note deleted" });
 	} catch (error) {
-		_res.status(404).json({ message: "Note not found" });
+		res.status(404).json({ message: "Note not found" });
 	}
 };
