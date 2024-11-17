@@ -8,8 +8,8 @@
     <n-drawer-content footer-class="gap-2">
       <img
         v-if="note.cover"
-        :src="note.cover"
-        class="aspect-video object-cover object-center"
+        :src="`${UPLOADS_BASE_URL}/${note.cover}`"
+        class="aspect-video object-cover object-center w-full"
       />
       <n-h1>{{ note.title }}</n-h1>
       <n-form
@@ -57,9 +57,10 @@
 </template>
 
 <script setup lang="ts">
-import { useAsyncData } from "#app";
+import { useAsyncData, useRuntimeConfig } from "#app";
 import type { INoteRead, INoteWrite, ITagRead } from "@b3-todo/api";
 import { Delete24Filled, Save24Filled } from "@vicons/fluent";
+import { useEventBus } from "@vueuse/core";
 import {
   type FormInst,
   NButton,
@@ -76,7 +77,8 @@ import { omit } from "naive-ui/es/_utils";
 import { ref } from "vue";
 import useApi from "~/composables/useApi";
 import useUtils from "~/composables/useUtils";
-import { useEventBus } from "@vueuse/core";
+
+const { UPLOADS_BASE_URL } = useRuntimeConfig().public;
 
 const { client } = useApi();
 
@@ -178,10 +180,10 @@ const handleSave = async () => {
   if (diff.tags) refreshTags();
   if (diff.state) {
     console.log(note.state, diff.state);
-    
+
     useEventBus(`refresh:notes/${note.state}`).emit();
     useEventBus(`refresh:notes/${diff.state}`).emit();
-  };
+  }
   emit("updated");
 };
 </script>

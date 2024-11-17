@@ -4,8 +4,11 @@ import {
 	parseFilterFromRequest,
 	parsePaginationInfosFromRequest,
 	parseSelectedFieldsFromRequest,
+	saveBase64Image,
 } from "@u";
 import type { Request, Response } from "express";
+import fs from "node:fs";
+import path from "node:path";
 
 export const getNotes = async (req: Request, res: Response) => {
 	try {
@@ -17,7 +20,7 @@ export const getNotes = async (req: Request, res: Response) => {
 			throw new APIError(
 				400,
 				"Invalid pagination parameters. Allowed values are limit >= 0 and page >= 1",
-			);		
+			);
 
 		const count = await Note.countDocuments(filter);
 
@@ -52,6 +55,7 @@ export const getNoteById = async (req: Request, res: Response) => {
 
 export const createNote = async (req: Request, res: Response) => {
 	try {
+		req.body.cover = saveBase64Image(req.body.cover);
 		const note = new Note(req.body);
 		await note.save();
 		res.status(201).json(note);
@@ -73,7 +77,10 @@ export const updateNote = async (req: Request, res: Response) => {
 export const deleteNote = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params;
-		await Note.findByIdAndDelete(id);
+		const note = await Note.findByIdAndDelete(id);
+		if (note?.cover) {
+			fs.unlinkSync(path.join(__dirname, `../../../uploads/${note.cover}`));
+		}
 		res.json({ message: "Note deleted" });
 	} catch (error) {
 		res.status(404).json({ message: "Note not found" });

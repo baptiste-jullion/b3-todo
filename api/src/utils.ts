@@ -1,5 +1,8 @@
 import type { Request, Response } from "express";
+import fs from "node:fs";
+import path from "node:path";
 import qs from "qs";
+import { v4 as uuid } from "uuid";
 
 export function parsePaginationInfosFromRequest(req: Request) {
 	const page = Number.parseInt(req.query.page as string) || 1;
@@ -71,4 +74,23 @@ export class APIError {
 		}
 		res.status(500).json({ error });
 	}
+}
+
+export function saveBase64Image(base64String?: string): string | null {
+	if (!base64String) return null;
+	const matches = base64String.match(/^data:(.+);base64,(.+)$/);
+	if (!matches) throw new Error("Invalid Base64 string");
+
+	const fileType = matches[1].split("/")[1];
+	const buffer = Buffer.from(matches[2], "base64");
+
+	const uploadPath = path.join(__dirname, "../uploads");
+	if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
+
+	const fname = `${Date.now()}-${uuid()}`;
+
+	const filePath = path.join(uploadPath, `${fname}.${fileType}`);
+	fs.writeFileSync(filePath, new Uint8Array(buffer));
+
+	return `${fname}.${fileType}`;
 }

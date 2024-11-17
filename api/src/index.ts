@@ -2,8 +2,15 @@ import { connectDB } from "@db/index";
 import router from "@r/router";
 import cors from "cors";
 import express from "express";
+import fs from "node:fs";
+import path from "node:path";
 
 connectDB();
+
+const uploadsFolder = path.join(__dirname, "../uploads");
+if (!fs.existsSync(uploadsFolder)) {
+	fs.mkdirSync(uploadsFolder);
+}
 
 const port = process.env.API_PORT;
 
@@ -15,6 +22,8 @@ if (!port) {
 const app = express();
 app.use(express.json({ limit: "50mb" }));
 app.use(cors());
+
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 app.use("/api", router);
 

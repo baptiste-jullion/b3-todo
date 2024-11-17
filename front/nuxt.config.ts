@@ -8,7 +8,10 @@ export default defineNuxtConfig({
 		autoImport: false,
 	},
 	runtimeConfig: {
-		public: { API_BASE_URL: "http://localhost:54321/api" },
+		public: {
+			API_BASE_URL: "http://localhost:54321/api",
+			UPLOADS_BASE_URL: "http://localhost:54321/uploads",
+		},
 	},
 	postcss: {
 		plugins: {
