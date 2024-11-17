@@ -151,23 +151,6 @@ const handleSave = async () => {
     return;
   }
 
-  if (diff.tags) {
-    const existingTags = tags.value.map((tag) => tag._id.toString());
-    for (let i = 0; i < diff.tags.length; i++) {
-      if (!existingTags.includes(diff.tags[i])) {
-        const newTagRes = await client.tags.create({
-          title: diff.tags[i],
-        });
-        if (newTagRes.success) {
-          diff.tags[i] = newTagRes.data._id.toString();
-        } else {
-          message.error(`Failed to create tag: ${diff.tags[i]}`);
-          return;
-        }
-      }
-    }
-  }
-
   const res = await client.notes.update(note._id, diff);
 
   if (!res.success) {
@@ -179,8 +162,6 @@ const handleSave = async () => {
   show.value = false;
   if (diff.tags) refreshTags();
   if (diff.state) {
-    console.log(note.state, diff.state);
-
     useEventBus(`refresh:notes/${note.state}`).emit();
     useEventBus(`refresh:notes/${diff.state}`).emit();
   }
