@@ -19,7 +19,7 @@ export type INoteWrite = Omit<
 	INoteRead,
 	"_id" | "createdAt" | "updatedAt" | "__v" | "tags"
 > & {
-	tags?: string[];
+	tags?: string[] | mongoose.Types.ObjectId[];
 };
 
 const NoteSchema: Schema = new Schema(

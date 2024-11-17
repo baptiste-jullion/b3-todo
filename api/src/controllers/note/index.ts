@@ -1,4 +1,5 @@
 import Note, { type INoteWrite } from "@m/Note";
+import Tag, { type ITagWrite } from "@m/Tag";
 import {
 	APIError,
 	type TypedRequest,
@@ -8,6 +9,7 @@ import {
 	saveBase64Image,
 } from "@u";
 import type { Response } from "express";
+import mongoose from "mongoose";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -62,17 +64,48 @@ export const getNoteById = async (
 	}
 };
 
+async function handleTags(
+	tags: (string | mongoose.Types.ObjectId)[],
+): Promise<mongoose.Types.ObjectId[]> {
+	const tagIds: mongoose.Types.ObjectId[] = [];
+	for (const tag of tags) {
+		if (typeof tag === "string") {
+			try {
+				if (mongoose.isValidObjectId(tag)) {
+					const existingTag = await Tag.findById(tag);
+					if (existingTag) {
+						tagIds.push(existingTag._id);
+					}
+				} else {
+					const existingTag = new Tag({ title: tag } as ITagWrite);
+					await existingTag.save();
+					tagIds.push(existingTag._id);
+				}
+			} catch (_e) {}
+		} else if (tag instanceof mongoose.Types.ObjectId) {
+			tagIds.push(tag);
+		}
+	}
+
+	return tagIds;
+}
+
 export const createNote = async (
 	req: TypedRequest<INoteWrite>,
 	res: Response,
 ) => {
 	try {
 		req.body.cover = saveBase64Image(req.body.cover);
+
+		if (req.body.tags) {
+			req.body.tags = await handleTags(req.body.tags);
+		}
+
 		const note = new Note(req.body);
 		await note.save();
 		res.status(201).json(note);
 	} catch (error) {
-		res.status(400).json({ message: "Invalid note" });
+		APIError.handleError(res, error);
 	}
 };
 
@@ -83,10 +116,20 @@ export const updateNote = async (
 	try {
 		const { id } = req.params;
 		req.body.cover = saveBase64Image(req.body.cover);
+
+		if (req.body.tags) {
+			req.body.tags = await handleTags(req.body.tags);
+		}
+
 		const note = await Note.findByIdAndUpdate(id, req.body, { new: true });
+
+		if (!note) {
+			throw new APIError(404);
+		}
+
 		res.json(note);
 	} catch (error) {
-		res.status(404).json({ message: "Note not found" });
+		APIError.handleError(res, error);
 	}
 };
 
@@ -102,6 +145,6 @@ export const deleteNote = async (
 		}
 		res.json({ message: "Note deleted" });
 	} catch (error) {
-		res.status(404).json({ message: "Note not found" });
+		APIError.handleError(res, error);
 	}
 };
