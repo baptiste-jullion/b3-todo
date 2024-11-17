@@ -1,4 +1,5 @@
-import Tag from "@m/Tag";
+import Tag, { type ITagWrite } from "@m/Tag";
+import type { TypedRequest } from "@u";
 import type { Request, Response } from "express";
 
 export const getTags = async (_req: Request, res: Response) => {
@@ -10,7 +11,10 @@ export const getTags = async (_req: Request, res: Response) => {
 	}
 };
 
-export const getTagById = async (req: Request, res: Response) => {
+export const getTagById = async (
+	req: TypedRequest<never, { id: string }>,
+	res: Response,
+) => {
 	try {
 		const { id } = req.params;
 		const tag = await Tag.findById(id);
@@ -20,7 +24,10 @@ export const getTagById = async (req: Request, res: Response) => {
 	}
 };
 
-export const createTag = async (req: Request, res: Response) => {
+export const createTag = async (
+	req: TypedRequest<ITagWrite>,
+	res: Response,
+) => {
 	try {
 		const tag = new Tag(req.body);
 		await tag.save();
@@ -30,7 +37,10 @@ export const createTag = async (req: Request, res: Response) => {
 	}
 };
 
-export const updateTag = async (req: Request, res: Response) => {
+export const updateTag = async (
+	req: TypedRequest<ITagWrite, { id: string }>,
+	res: Response,
+) => {
 	try {
 		const { id } = req.params;
 		const tag = await Tag.findByIdAndUpdate(id, req.body, { new: true });
@@ -40,7 +50,10 @@ export const updateTag = async (req: Request, res: Response) => {
 	}
 };
 
-export const deleteTag = async (req: Request, res: Response) => {
+export const deleteTag = async (
+	req: TypedRequest<never, { id: string }>,
+	res: Response,
+) => {
 	try {
 		const { id } = req.params;
 		await Tag.findByIdAndDelete(id);

@@ -3,10 +3,17 @@ import fs from "node:fs";
 import path from "node:path";
 import qs from "qs";
 import { v4 as uuid } from "uuid";
+import type { ParamsDictionary } from "express-serve-static-core";
 
 export function parsePaginationInfosFromRequest(req: Request) {
 	const page = Number.parseInt(req.query.page as string) || 1;
 	const limit = Number.parseInt(req.query.limit as string) || 10;
+
+	if (limit < 0 || page < 1)
+		throw new APIError(
+			400,
+			"Invalid pagination parameters. Allowed values are limit >= 0 and page >= 1",
+		);
 
 	return {
 		page,
@@ -76,7 +83,7 @@ export class APIError {
 	}
 }
 
-export function saveBase64Image(base64String?: string): string | null {
+export function saveBase64Image(base64String?: string | null): string | null {
 	if (!base64String) return null;
 	const matches = base64String.match(/^data:(.+);base64,(.+)$/);
 	if (!matches) throw new Error("Invalid Base64 string");
@@ -93,4 +100,10 @@ export function saveBase64Image(base64String?: string): string | null {
 	fs.writeFileSync(filePath, new Uint8Array(buffer));
 
 	return `${fname}.${fileType}`;
+}
+
+
+export interface TypedRequest<Body = never, Params extends ParamsDictionary = ParamsDictionary> extends Request {
+	body: Body;
+	params: Params;
 }
