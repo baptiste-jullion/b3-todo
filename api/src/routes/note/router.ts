@@ -1,4 +1,3 @@
-import { Router } from "express";
 import {
 	createNote,
 	deleteNote,
@@ -6,6 +5,7 @@ import {
 	getNotes,
 	updateNote,
 } from "@c/note";
+import { Router } from "express";
 
 const router = Router();
 
