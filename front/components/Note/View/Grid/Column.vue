@@ -15,7 +15,7 @@
         :key="note._id"
       />
       <n-button v-if="hasMore" @click="refresh()" type="primary" class="w-full">
-()        Load More
+        Load More
       </n-button>
       <slot name="after" />
     </n-card>
@@ -41,8 +41,6 @@ const { client } = useApi();
 const bus = useEventBus(`refresh:notes/${state}`);
 const { top } = useElementBounding(el);
 
-const page = ref(1);
-
 const {
   data: notes,
   refresh,
@@ -54,8 +52,7 @@ const {
       state,
     },
     pagination: {
-      page: page.value,
-      limit: 4,
+      limit: 100,
     },
   });
   if (!res.success) {
