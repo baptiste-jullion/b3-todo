@@ -1,20 +1,30 @@
 ```mermaid
----
-title: Database Structure
----
 erDiagram
-    NOTE }o--|| TASK : linked_to
-    NOTE {
-        uuid id PK
-        varchar(100) title
-        text description
-        blob cover
+    TAG {
+        ObjectId _id PK
+        string title
     }
-    TASK {
-        uuid id PK
-        varchar(255) label
-        bool completed
-    }
-```
 
-Will be updated
+    NOTE {
+        ObjectId _id PK
+        string title
+        string description
+        string cover
+        string[] tasks
+        ObjectId[] tags
+        number dueDate
+        string state
+        Date createdAt
+        Date updatedAt
+    }
+
+    TASK {
+        ObjectId _id PK
+        string label
+        boolean completed
+        ObjectId note FK
+    }
+
+    TAG ||--o{ NOTE : "can be associated with"
+    NOTE ||--o{ TASK : "can have multiple"
+```
