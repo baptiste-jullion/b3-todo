@@ -1,6 +1,6 @@
-import noteRouter from "@r/note/router";
-import tagRouter from "@r/tag/router";
-import taskRouter from "@r/task/router";
+import noteRouter from "@r/api/note/router";
+import tagRouter from "@r/api/tag/router";
+import taskRouter from "@r/api/task/router";
 import { Router } from "express";
 
 const router = Router();

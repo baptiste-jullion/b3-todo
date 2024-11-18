@@ -2,7 +2,6 @@ import type { ITagRead } from "@m/Tag";
 import mongoose, { Schema } from "mongoose";
 
 export interface INoteRead {
-	__v: number;
 	_id: string;
 	cover?: string | null;
 	createdAt: Date;
@@ -17,7 +16,7 @@ export interface INoteRead {
 
 export type INoteWrite = Omit<
 	INoteRead,
-	"_id" | "createdAt" | "updatedAt" | "__v" | "tags"
+	"_id" | "createdAt" | "updatedAt" | "tags"
 > & {
 	tags?: string[];
 };
@@ -38,9 +37,7 @@ const NoteSchema: Schema = new Schema(
 	},
 	{
 		timestamps: true,
-		toJSON: {
-			virtuals: true,
-		},
+		versionKey: false,
 	},
 );
 
