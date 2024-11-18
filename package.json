@@ -11,7 +11,8 @@
 	"scripts": {
 		"setup": "rm node_modules -rf && bun i && bun dev",
 		"dev": "bun --filter '*' dev",
-		"api": "cd api && bun dev:api"
+		"api": "cd api && bun dev:api",
+		"generate_jwt_pk": "openssl rand --base64 32"
 	},
 	"dependencies": {
 		"qs": "^6.13.0"
