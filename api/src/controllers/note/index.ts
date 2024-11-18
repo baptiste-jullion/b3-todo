@@ -37,7 +37,7 @@ export const getNotes = async (
 		const notes = await Note.find(filter, fields)
 			.limit(limit)
 			.skip((page - 1) * limit)
-			.sort({ updatedAt: -1 });
+			.sort({ createdAt: -1 });
 
 		res.json({
 			count,
@@ -64,26 +64,22 @@ export const getNoteById = async (
 	}
 };
 
-async function handleTags(
-	tags: (string | mongoose.Types.ObjectId)[],
-): Promise<mongoose.Types.ObjectId[]> {
-	const tagIds: mongoose.Types.ObjectId[] = [];
+async function handleTags(tags: string[]): Promise<string[]> {
+	const tagIds: string[] = [];
 	for (const tag of tags) {
 		if (typeof tag === "string") {
 			try {
 				if (mongoose.isValidObjectId(tag)) {
 					const existingTag = await Tag.findById(tag);
 					if (existingTag) {
-						tagIds.push(existingTag._id);
+						tagIds.push(existingTag._id.toString());
 					}
 				} else {
 					const existingTag = new Tag({ title: tag } as ITagWrite);
 					await existingTag.save();
-					tagIds.push(existingTag._id);
+					tagIds.push(existingTag._id.toString());
 				}
 			} catch (_e) {}
-		} else if (tag instanceof mongoose.Types.ObjectId) {
-			tagIds.push(tag);
 		}
 	}
 
