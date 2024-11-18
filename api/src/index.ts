@@ -4,6 +4,7 @@ import cors from "cors";
 import express from "express";
 import fs from "node:fs";
 import path from "node:path";
+import { logger } from "@md/logger";
 
 connectDB();
 
@@ -22,6 +23,7 @@ if (!port) {
 const app = express();
 app.use(express.json({ limit: "50mb" }));
 app.use(cors());
+app.use(logger);
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
