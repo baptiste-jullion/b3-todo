@@ -9,7 +9,7 @@
       <img
         v-if="note.cover"
         :src="`${UPLOADS_BASE_URL}/${note.cover}`"
-        class="aspect-video object-cover object-center w-full"
+        class="aspect-video w-full object-cover object-center"
       />
       <n-h1>{{ note.title }}</n-h1>
       <n-form
@@ -21,17 +21,7 @@
         <n-form-item label="State" path="state">
           <n-select :options="stateOptions" v-model:value="formValue.state" />
         </n-form-item>
-        <n-form-item label="Tags" path="tags">
-          <n-select
-            label-field="title"
-            value-field="_id"
-            filterable
-            multiple
-            v-model:value="formValue.tags"
-            tag
-            :options="tags"
-          />
-        </n-form-item>
+        <TagsSelectInput v-model="formValue.tags" />
       </n-form>
       <template #footer>
         <n-popconfirm @positive-click="deleteNote">
@@ -75,6 +65,7 @@ import {
 } from "naive-ui";
 import { omit } from "naive-ui/es/_utils";
 import { ref } from "vue";
+import TagsSelectInput from "~/components/Tags/SelectInput.vue";
 import useApi from "~/composables/useApi";
 import useUtils from "~/composables/useUtils";
 
@@ -121,8 +112,8 @@ const deleteNote = async () => {
   useEventBus(`refresh:notes/${note.state}`).emit();
 };
 
-const { data: tags, refresh: refreshTags } = await useAsyncData(
-  `tags/${note._id}`,
+const { refresh: refreshTags } = await useAsyncData(
+  "tags",
   async () => {
     const tags = await client.tags.list();
     if (!tags.success) {
