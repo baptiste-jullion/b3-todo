@@ -9,7 +9,7 @@
       <img
         v-if="note.cover"
         :src="`${UPLOADS_BASE_URL}/${note.cover}`"
-        class="aspect-video object-cover object-center w-full"
+        class="aspect-video w-full object-cover object-center"
       />
       <n-h1>{{ note.title }}</n-h1>
       <n-form
@@ -21,17 +21,7 @@
         <n-form-item label="State" path="state">
           <n-select :options="stateOptions" v-model:value="formValue.state" />
         </n-form-item>
-        <n-form-item label="Tags" path="tags">
-          <n-select
-            label-field="title"
-            value-field="_id"
-            filterable
-            multiple
-            v-model:value="formValue.tags"
-            tag
-            :options="tags"
-          />
-        </n-form-item>
+        <TagsSelectInput v-model="formValue.tags" />
       </n-form>
       <template #footer>
         <n-popconfirm @positive-click="deleteNote">
@@ -75,6 +65,7 @@ import {
 } from "naive-ui";
 import { omit } from "naive-ui/es/_utils";
 import { ref } from "vue";
+import TagsSelectInput from "~/components/Tags/SelectInput.vue";
 import useApi from "~/composables/useApi";
 import useUtils from "~/composables/useUtils";
 
@@ -121,8 +112,8 @@ const deleteNote = async () => {
   useEventBus(`refresh:notes/${note.state}`).emit();
 };
 
-const { data: tags, refresh: refreshTags } = await useAsyncData(
-  `tags/${note._id}`,
+const { refresh: refreshTags } = await useAsyncData(
+  "tags",
   async () => {
     const tags = await client.tags.list();
     if (!tags.success) {
@@ -151,23 +142,6 @@ const handleSave = async () => {
     return;
   }
 
-  if (diff.tags) {
-    const existingTags = tags.value.map((tag) => tag._id.toString());
-    for (let i = 0; i < diff.tags.length; i++) {
-      if (!existingTags.includes(diff.tags[i])) {
-        const newTagRes = await client.tags.create({
-          title: diff.tags[i],
-        });
-        if (newTagRes.success) {
-          diff.tags[i] = newTagRes.data._id.toString();
-        } else {
-          message.error(`Failed to create tag: ${diff.tags[i]}`);
-          return;
-        }
-      }
-    }
-  }
-
   const res = await client.notes.update(note._id, diff);
 
   if (!res.success) {
@@ -179,8 +153,6 @@ const handleSave = async () => {
   show.value = false;
   if (diff.tags) refreshTags();
   if (diff.state) {
-    console.log(note.state, diff.state);
-
     useEventBus(`refresh:notes/${note.state}`).emit();
     useEventBus(`refresh:notes/${diff.state}`).emit();
   }

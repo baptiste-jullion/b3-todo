@@ -5,7 +5,6 @@
         ref="formRef"
         :model="formValue"
         :rules
-        class="flex flex-col gap-2"
       >
         <n-form-item label="Title" path="title">
           <n-input v-model:value="formValue.title" />
@@ -18,6 +17,7 @@
             show-count
           />
         </n-form-item>
+        <TagsSelectInput v-model="formValue.tags" />
         <n-form-item label="Cover" path="cover">
           <n-upload
             v-if="!formValue.cover"
@@ -93,6 +93,7 @@ import {
   useMessage,
 } from "naive-ui";
 import { computed, ref } from "vue";
+import TagsSelectInput from "~/components/Tags/SelectInput.vue";
 import useApi from "~/composables/useApi";
 
 const { client } = useApi();
