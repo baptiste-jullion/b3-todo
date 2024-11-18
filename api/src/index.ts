@@ -1,10 +1,11 @@
 import { connectDB } from "@db/index";
-import router from "@r/router";
+import { logger } from "@md/logger";
+import apiRouter from "@r/api/router";
+import authRouter from "@r/auth/router";
 import cors from "cors";
 import express from "express";
 import fs from "node:fs";
 import path from "node:path";
-import { logger } from "@md/logger";
 
 connectDB();
 
@@ -27,7 +28,12 @@ app.use(logger);
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-app.use("/api", router);
+app.use("/api", apiRouter);
+app.use("/auth", authRouter);
+
+app.use((_req, res) => {
+	res.status(404).json({ error: "Not Found" });
+});
 
 app.listen(port, () => {
 	console.log(`Server is running on http://localhost:${port}`);
