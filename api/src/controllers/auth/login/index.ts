@@ -1,6 +1,6 @@
 import User from "@m/User";
 import { APIError, type TypedRequest } from "@u";
-import bcrypt from "bcrypt";
+import argon from "argon2";
 import type { Response } from "express";
 import jwt from "jsonwebtoken";
 
@@ -19,7 +19,7 @@ export const login = async (
 			throw new APIError(404, "Email or password is invalid");
 		}
 
-		const isPasswordValid = await bcrypt.compare(password, user.password);
+		const isPasswordValid = await argon.verify(user.password, password);
 
 		if (!isPasswordValid) {
 			throw new APIError(404, "Email or password is invalid");

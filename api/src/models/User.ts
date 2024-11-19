@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import argon from "argon2";
 import mongoose, { Schema } from "mongoose";
 
 export interface IUserRead {
@@ -41,8 +41,9 @@ const UserSchema: Schema = new Schema(
 
 UserSchema.pre("save", async function (next) {
 	const user = this as unknown as IUserWrite;
-	const salt = await bcrypt.genSalt(10);
-	const hash = await bcrypt.hash(user.password, salt);
+	const hash = await argon.hash(user.password, {
+		type: argon.argon2id,
+	});
 	user.password = hash;
 	next();
 });

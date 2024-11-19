@@ -107,3 +107,7 @@ export interface TypedRequest<Body = never, Params extends ParamsDictionary = Pa
 	body: Body;
 	params: Params;
 }
+
+export interface AuthenticatedRequest<Body = never, Params extends ParamsDictionary = ParamsDictionary> extends TypedRequest<Body, Params> {
+	userId: string;
+}
