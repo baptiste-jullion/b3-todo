@@ -12,6 +12,7 @@ export interface INoteRead {
 	tasks?: string[];
 	title: string;
 	updatedAt: Date;
+	author: string;
 }
 
 export type INoteWrite = Omit<
@@ -34,6 +35,7 @@ const NoteSchema: Schema = new Schema(
 			enum: ["todo", "in_progress", "completed"],
 			default: "todo",
 		},
+		author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 	},
 	{
 		timestamps: true,

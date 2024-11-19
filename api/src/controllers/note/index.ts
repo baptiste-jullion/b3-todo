@@ -22,17 +22,19 @@ export const getNotes = async (
 			page?: string;
 			filter?: string;
 		}
-	>,
+	> & { userId?: string },
 	res: Response,
 ) => {
 	try {
 		const fields = parseSelectedFieldsFromRequest(req);
 		const { limit, page } = parsePaginationInfosFromRequest(req);
 		const filter = parseFilterFromRequest(req);
+		filter.author = req.userId;
 
 		const count = await Note.countDocuments(filter);
 
 		if (count === 0 || (page - 1) * limit >= count) throw new APIError(404);
+
 
 		const notes = await Note.find(filter, fields)
 			.limit(limit)
@@ -51,7 +53,7 @@ export const getNotes = async (
 };
 
 export const getNoteById = async (
-	req: TypedRequest<never, { id: string }>,
+	req: TypedRequest<never, { id: string }> & { userId?: string },
 	res: Response,
 ) => {
 	try {
@@ -87,7 +89,7 @@ async function handleTags(tags: string[]): Promise<string[]> {
 }
 
 export const createNote = async (
-	req: TypedRequest<INoteWrite>,
+	req: TypedRequest<INoteWrite> & { userId?: string },
 	res: Response,
 ) => {
 	try {
@@ -97,7 +99,7 @@ export const createNote = async (
 			req.body.tags = await handleTags(req.body.tags);
 		}
 
-		const note = new Note(req.body);
+		const note = new Note({ ...req.body, author: req.userId });
 		await note.save();
 		res.status(201).json(note);
 	} catch (error) {
@@ -106,7 +108,7 @@ export const createNote = async (
 };
 
 export const updateNote = async (
-	req: TypedRequest<INoteWrite, { id: string }>,
+	req: TypedRequest<INoteWrite, { id: string }> & { userId?: string },
 	res: Response,
 ) => {
 	try {
@@ -130,7 +132,7 @@ export const updateNote = async (
 };
 
 export const deleteNote = async (
-	req: TypedRequest<never, { id: string }>,
+	req: TypedRequest<never, { id: string }> & { userId?: string },
 	res: Response,
 ) => {
 	try {

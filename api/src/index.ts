@@ -1,4 +1,5 @@
 import { connectDB } from "@db/index";
+import auth from "@md/auth";
 import { logger } from "@md/logger";
 import apiRouter from "@r/api/router";
 import authRouter from "@r/auth/router";
@@ -28,7 +29,7 @@ app.use(logger);
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-app.use("/api", apiRouter);
+app.use("/api", auth, apiRouter);
 app.use("/auth", authRouter);
 
 app.use((_req, res) => {

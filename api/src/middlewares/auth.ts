@@ -1,9 +1,13 @@
 import User from "@m/User";
 import { APIError } from "@u";
-import type { Request, Response } from "express";
+import type { NextFunction, Response, Request } from "express";
 import jwt from "jsonwebtoken";
 
-export const verify = async (req: Request, res: Response) => {
+export default async (
+	req: Request & { userId?: string },
+	res: Response,
+	next: NextFunction,
+) => {
 	try {
 		if (!req.headers.authorization?.startsWith("Bearer"))
 			throw new APIError(401);
@@ -18,7 +22,9 @@ export const verify = async (req: Request, res: Response) => {
 
 		if (!user) throw new APIError(401);
 
-		res.status(200).json(user._id);
+		req.userId = user._id;
+
+		next();
 	} catch (err) {
 		APIError.handleError(res, err);
 	}
