@@ -125,7 +125,24 @@ class Tags extends BaseAPI {
 	}
 }
 
+class Auth extends BaseAPI {
+	public async login(username: string, password: string) {
+		return await this.fetchApi<{ token: string }>("/auth/login", {
+			method: "POST",
+			body: JSON.stringify({ username, password }),
+		});
+	}
+
+	public async register(username: string, password: string) {
+		return await this.fetchApi<{ token: string }>("/auth/register", {
+			method: "POST",
+			body: JSON.stringify({ username, password }),
+		});
+	}
+}
+
 export class API extends BaseAPI {
 	public notes = new Notes(this.API_BASE_URL);
 	public tags = new Tags(this.API_BASE_URL);
+	public auth = new Auth(this.API_BASE_URL);
 }
