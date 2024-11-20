@@ -21,6 +21,3 @@ bun dev
 # run api build
 bun api
 ```
-
-# Acces app
-Go to http://localhost:4200
