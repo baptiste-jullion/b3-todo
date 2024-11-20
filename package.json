@@ -13,7 +13,7 @@
 		"dev": "bun --filter '*' dev",
 		"api": "cd api && bun dev:api",
 		"generate_jwt_pk": "openssl rand --base64 32",
-		"start": "bun --filter '*' start"
+		"start": "bun i && bun --filter '*' start"
 	},
 	"dependencies": {
 		"qs": "^6.13.0"
