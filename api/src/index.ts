@@ -3,23 +3,27 @@ import auth from "@md/auth";
 import { logger } from "@md/logger";
 import apiRouter from "@r/api/router";
 import authRouter from "@r/auth/router";
+import { checkEnvVars } from "@u";
 import cors from "cors";
 import express from "express";
 import fs from "node:fs";
 import path from "node:path";
+
+checkEnvVars(
+	"MONGO_URI",
+	"API_PORT",
+	"API_HOST",
+	"API_BASE_ROUTE",
+	"API_UPLOADS_ROUTE",
+	"API_PROTOCOL",
+	"JWT_SECRET",
+);
 
 connectDB();
 
 const uploadsFolder = path.join(__dirname, "../uploads");
 if (!fs.existsSync(uploadsFolder)) {
 	fs.mkdirSync(uploadsFolder);
-}
-
-const port = process.env.API_PORT;
-
-if (!port) {
-	console.error("API_PORT is missing");
-	process.exit(1);
 }
 
 const app = express();
@@ -36,6 +40,6 @@ app.use((_req, res) => {
 	res.status(404).json({ error: "Not Found" });
 });
 
-app.listen(port, () => {
-	console.log(`Server is running on http://localhost:${port}`);
+app.listen(process.env.API_PORT, () => {
+	console.log(`Server is running on http://localhost:${process.env.API_PORT}`);
 });

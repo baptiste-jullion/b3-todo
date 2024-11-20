@@ -111,3 +111,11 @@ export interface TypedRequest<Body = never, Params extends ParamsDictionary = Pa
 export interface AuthenticatedRequest<Body = never, Params extends ParamsDictionary = ParamsDictionary> extends TypedRequest<Body, Params> {
 	userId: string;
 }
+
+export function checkEnvVars(...vars: string[]) {
+	const missingVars = vars.filter((v) => !process.env[v]);
+	if (missingVars.length) {
+		throw new Error(`Missing environment variables: ${missingVars.join(", ")}`);
+	}
+	console.log("All environment variables are set");
+}
