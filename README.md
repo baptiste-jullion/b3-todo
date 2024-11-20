@@ -21,3 +21,11 @@ bun dev
 # run api build
 bun api
 ```
+
+# RoadMap
+```mermaid
+timeline
+    β1.0.1: Authentication
+    β1.0.2: Data serializers
+    β1.0.3: Use Docker
+```
