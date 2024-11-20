@@ -7,7 +7,8 @@
 		"dev": "nuxt dev --dotenv ../.env",
 		"generate": "nuxt generate",
 		"preview": "nuxt preview",
-		"postinstall": "nuxt prepare"
+		"postinstall": "nuxt prepare",
+		"start": "bun run build && bun --env-file=../.env.production .output/server/index.mjs"
 	},
 	"dependencies": {
 		"@b3-todo/api": "workspace:*",

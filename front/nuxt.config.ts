@@ -6,13 +6,10 @@ export default defineNuxtConfig({
 	imports: {
 		autoImport: false,
 	},
-	devServer: {
-		port: (process.env.FRONT_PORT as number | undefined) || 3000,
-	},
 	runtimeConfig: {
 		public: {
-			API_BASE_URL: `http://${process.env.API_HOST}:${process.env.API_PORT}/${process.env.API_BASE_ROUTE}`,
-			UPLOADS_BASE_URL: `http://${process.env.API_HOST}:${process.env.API_PORT}/${process.env.API_UPLOADS_ROUTE}`,
+			API_BASE_URL: process.env.NUXT_PUBLIC_API_BASE_URL,
+			UPLOADS_BASE_URL: process.env.NUXT_PUBLIC_UPLOADS_BASE_URL,
 		},
 	},
 	postcss: {
@@ -20,5 +17,11 @@ export default defineNuxtConfig({
 			tailwindcss: {},
 			autoprefixer: {},
 		},
+	},
+	build: {
+		transpile:
+			process.env.NODE_ENV === "production"
+				? ["naive-ui", "vueuc", "@css-render/vue3-ssr"]
+				: [],
 	},
 });
