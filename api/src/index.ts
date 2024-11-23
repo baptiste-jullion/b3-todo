@@ -1,8 +1,6 @@
 import { connectDB } from "@db/index";
-import auth from "@md/auth";
-import { logger } from "@md/logger";
+import { logger } from "@mw/logger";
 import apiRouter from "@r/api/router";
-import authRouter from "@r/auth/router";
 import { checkEnvVars } from "@u";
 import cors from "cors";
 import express from "express";
@@ -33,8 +31,7 @@ app.use(logger);
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-app.use("/api", auth, apiRouter);
-app.use("/auth", authRouter);
+app.use("/api", apiRouter);
 
 app.use((_req, res) => {
 	res.status(404).json({ error: "Not Found" });

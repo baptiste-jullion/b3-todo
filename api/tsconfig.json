@@ -10,11 +10,11 @@
 		"allowSyntheticDefaultImports": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"outDir": "./dist", 
+		"outDir": "./dist",
 		"paths": {
 			"@db/*": ["src/database/*"],
 			"@m/*": ["src/models/*"],
-			"@md/*": ["src/middlewares/*"],
+			"@mw/*": ["src/middlewares/*"],
 			"@r/*": ["src/routes/*"],
 			"@c/*": ["src/controllers/*"],
 			"@u": ["src/utils"]
