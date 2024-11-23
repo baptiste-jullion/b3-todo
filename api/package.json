@@ -5,8 +5,8 @@
 	"type": "module",
 	"types": "dist/types.d.ts",
 	"scripts": {
-		"dev": "bun --env-file=../.env --hot src/index.ts",
-		"dev:api": "concurrently 'bun tsc --watch' 'bun tsc-alias --watch'",
+		"dev": "NODE_ENV=development bun --env-file=../.env --hot src/index.ts",
+		"dev:api": "NODE_ENV=development concurrently 'bun tsc --watch' 'bun tsc-alias --watch'",
 		"build": "bunx tsc && bunx tsc-alias",
 		"start": "bun run build && bun --env-file=../.env.production dist/index.js"
 	},
