@@ -1,5 +1,6 @@
 import type { INoteRead, INoteWrite } from "@m/Note";
 import type { ITagRead, ITagWrite } from "@m/Tag";
+import type { IUserWrite } from "@m/User";
 import qs from "qs";
 
 interface PaginationParams {
@@ -22,12 +23,17 @@ interface APIResponseSuccess<T> {
 interface APIResponseError {
 	success: false;
 	error: string;
+	response: Response;
 }
 
 class BaseAPI {
 	protected API_BASE_URL: string;
-	constructor(baseUrl: string) {
+	protected headers: Headers;
+
+	constructor(baseUrl: string, headers?: Headers) {
 		this.API_BASE_URL = baseUrl;
+		this.headers =
+			headers || new Headers({ "Content-Type": "application/json" });
 	}
 
 	protected async fetchApi<T>(
@@ -37,9 +43,7 @@ class BaseAPI {
 		const response = await fetch(
 			`${this.API_BASE_URL}${url}${options.query ? `?${options.query.toString()}` : ""}`,
 			{
-				headers: {
-					"Content-Type": "application/json",
-				},
+				headers: this.headers,
 				...options,
 			},
 		);
@@ -48,6 +52,7 @@ class BaseAPI {
 			return {
 				success: false,
 				error: `Request failed with status ${response.status}: ${await response.text()}`,
+				response,
 			} as APIResponseError;
 		}
 
@@ -126,23 +131,51 @@ class Tags extends BaseAPI {
 }
 
 class Auth extends BaseAPI {
-	public async login(username: string, password: string) {
-		return await this.fetchApi<{ token: string }>("/auth/login", {
+	public async login(user: Pick<IUserWrite, "username" | "password">) {
+		const res = await this.fetchApi<{ token: string }>("/auth/login", {
 			method: "POST",
-			body: JSON.stringify({ username, password }),
+			body: JSON.stringify(user),
 		});
+
+		if (!res.success) return res;
+
+		this.headers.set("Authorization", `Bearer ${res.data.token}`);
+
+		return res;
 	}
 
-	public async register(username: string, password: string) {
-		return await this.fetchApi<{ token: string }>("/auth/register", {
+	public async register(user: IUserWrite) {
+		const res = await this.fetchApi<{ token: string }>("/auth/register", {
 			method: "POST",
-			body: JSON.stringify({ username, password }),
+			body: JSON.stringify(user),
 		});
+
+		if (!res.success) return res;
+
+		this.headers.set("Authorization", `Bearer ${res.data.token}`);
+
+		return res;
+	}
+
+	public async logout() {
+		this.headers.delete("Authorization");
+		return { success: true };
+	}
+
+	public async injectToken(token: string) {
+		this.headers.set("Authorization", `Bearer ${token}`);
 	}
 }
 
 export class API extends BaseAPI {
-	public notes = new Notes(this.API_BASE_URL);
-	public tags = new Tags(this.API_BASE_URL);
-	public auth = new Auth(this.API_BASE_URL);
+	public notes: Notes;
+	public tags: Tags;
+	public auth: Auth;
+
+	constructor(baseUrl: string) {
+		super(baseUrl);
+		this.notes = new Notes(this.API_BASE_URL, this.headers);
+		this.tags = new Tags(this.API_BASE_URL, this.headers);
+		this.auth = new Auth(this.API_BASE_URL, this.headers);
+	}
 }
