@@ -3,7 +3,6 @@
     <n-select
       label-field="title"
       value-field="_id"
-      
       filterable
       multiple
       v-model:value="model"
@@ -20,7 +19,7 @@ import { NFormItem, NSelect, useMessage } from "naive-ui";
 import type { Value } from "naive-ui/es/select/src/interface";
 import useApi from "~/composables/useApi";
 
-const { client } = useApi();
+const { api } = useApi();
 const message = useMessage();
 
 const model = defineModel<Value | undefined>({ required: true });
@@ -28,7 +27,7 @@ const model = defineModel<Value | undefined>({ required: true });
 const { data: tags } = await useAsyncData(
   "tags",
   async () => {
-    const tags = await client.tags.list();
+    const tags = await api.tags.list();
     if (!tags.success) {
       message.error(tags.error);
       return [];

@@ -71,7 +71,7 @@ import useUtils from "~/composables/useUtils";
 
 const { UPLOADS_BASE_URL } = useRuntimeConfig().public;
 
-const { client } = useApi();
+const { api } = useApi();
 
 const show = defineModel<boolean>({ required: true });
 const message = useMessage();
@@ -101,7 +101,7 @@ const formValue = ref<Omit<INoteWrite, "tags"> & { tags: string[] }>({
 });
 
 const deleteNote = async () => {
-  const res = await client.notes.delete(note._id);
+  const res = await api.notes.delete(note._id);
 
   if (!res.success) {
     message.error(res.error);
@@ -115,7 +115,7 @@ const deleteNote = async () => {
 const { refresh: refreshTags } = await useAsyncData(
   "tags",
   async () => {
-    const tags = await client.tags.list();
+    const tags = await api.tags.list();
     if (!tags.success) {
       message.error(tags.error);
       return [];
@@ -142,7 +142,7 @@ const handleSave = async () => {
     return;
   }
 
-  const res = await client.notes.update(note._id, diff);
+  const res = await api.notes.update(note._id, diff);
 
   if (!res.success) {
     message.error(res.error);

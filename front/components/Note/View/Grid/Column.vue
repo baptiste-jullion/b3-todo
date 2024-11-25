@@ -37,7 +37,7 @@ const { state } = defineProps<{
 
 const el = ref<HTMLElement | null>(null);
 
-const { client } = useApi();
+const { api } = useApi();
 const bus = useEventBus(`refresh:notes/${state}`);
 const { top } = useElementBounding(el);
 
@@ -46,7 +46,7 @@ const {
   refresh,
   status,
 } = await useAsyncData(`notes/${state}`, async () => {
-  const res = await client.notes.list({
+  const res = await api.notes.list({
     fields: ["_id"],
     filter: {
       state,

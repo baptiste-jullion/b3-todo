@@ -1,11 +1,7 @@
 <template>
   <n-modal v-model:show="showModal" class="max-w-xl">
     <n-card :title="formValue.title || 'New note...'">
-      <n-form
-        ref="formRef"
-        :model="formValue"
-        :rules
-      >
+      <n-form ref="formRef" :model="formValue" :rules>
         <n-form-item label="Title" path="title">
           <n-input v-model:value="formValue.title" />
         </n-form-item>
@@ -96,7 +92,7 @@ import { computed, ref } from "vue";
 import TagsSelectInput from "~/components/Tags/SelectInput.vue";
 import useApi from "~/composables/useApi";
 
-const { client } = useApi();
+const { api } = useApi();
 
 const showModal = defineModel<boolean>({ required: true });
 const { initialValues } = defineProps<{
@@ -146,7 +142,7 @@ const handleValidateClick = (e: MouseEvent) => {
     if (err) {
       message.error("Form validation failed");
     } else {
-      const res = await client.notes.create(formValue.value);
+      const res = await api.notes.create(formValue.value);
 
       if (!res.success) {
         message.error("An error occurred");

@@ -1,7 +1,10 @@
-import { useRuntimeConfig } from "#app";
-import { API } from "@b3-todo/api/src/client";
+import { useCookie, useNuxtApp, useRuntimeConfig } from "#app";
 
 export default function useApi() {
-	const { API_BASE_URL } = useRuntimeConfig().public;
-	return { client: new API(API_BASE_URL) };
+	const { $api } = useNuxtApp();
+	const cookie = useCookie(useRuntimeConfig().public.JWT_COOKIE_NAME);
+	cookie.value && $api.auth.injectToken(cookie.value);
+	return {
+		api: $api,
+	};
 }

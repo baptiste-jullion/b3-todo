@@ -42,11 +42,7 @@
         </template>
       </n-avatar-group>
     </div>
-    <NoteDetailsDrawer
-      :note="note"
-      v-model="showDrawer"
-      @updated="refresh"
-    />
+    <NoteDetailsDrawer :note="note" v-model="showDrawer" @updated="refresh" />
   </n-card>
 </template>
 
@@ -68,7 +64,7 @@ import { computed, ref } from "vue";
 import NoteDetailsDrawer from "~/components/Note/DetailsDrawer.vue";
 import useApi from "~/composables/useApi";
 
-const { client } = useApi();
+const { api } = useApi();
 
 const { noteId } = defineProps<{
   noteId: INoteRead["_id"];
@@ -76,7 +72,7 @@ const { noteId } = defineProps<{
 const emit = defineEmits(["state-updated"]);
 
 const { data: note, refresh } = await useAsyncData(noteId, async () => {
-  const res = await client.notes.get(noteId);
+  const res = await api.notes.get(noteId);
 
   if (!res.success) {
     throw new Error(res.error);
