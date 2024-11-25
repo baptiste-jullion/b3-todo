@@ -14,7 +14,7 @@
 		"@b3-todo/api": "workspace:*",
 		"@vueuse/core": "^11.2.0",
 		"naive-ui": "^2.40.1",
-		"nuxt": "^3.13.2",
+		"nuxt": "^3.14.1592",
 		"nuxtjs-naive-ui": "^1.0.2",
 		"vue": "latest",
 		"vue-router": "latest"
