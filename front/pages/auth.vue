@@ -22,7 +22,7 @@
       class="flex size-full items-center justify-center p-8 pl-4"
       :style="{
         transform:
-          mode == 'login' ? 'translateX(0)' : 'translateX(calc(-100% - 1rem))',
+          mode == 'login' ? 'translateX(0)' : 'translateX(calc(-100% + 1rem))',
       }"
     >
       <n-form

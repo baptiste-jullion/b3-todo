@@ -32,10 +32,10 @@
     </div>
     <div class="flex justify-end pt-4">
       <n-avatar-group :options="users" :size="32">
-        <template #avatar="{ option: { name, src } }">
+        <template #avatar="{ option: { name,src } }">
           <n-tooltip>
             <template #trigger>
-              <n-avatar :src="src" />
+              <n-avatar :src />
             </template>
             {{ name }}
           </n-tooltip>
@@ -63,6 +63,7 @@ import {
 import { computed, ref } from "vue";
 import NoteDetailsDrawer from "~/components/Note/DetailsDrawer.vue";
 import useApi from "~/composables/useApi";
+import { toSvg } from "jdenticon";
 
 const { api } = useApi();
 
@@ -84,26 +85,18 @@ const timeAgo = useTimeAgo(computed(() => note.value?.dueDate || new Date()));
 
 const showDrawer = ref(false);
 
+const getAvatarUrl = (src: string) => {
+  return `data:image/svg+xml,${encodeURIComponent(toSvg(src, 32))}`;
+};
+
 const users = [
   {
     name: "Leonardo DiCaprio",
-    src: "https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg",
+    src: getAvatarUrl("Leonardo DiCaprio")
   },
   {
     name: "Jennifer Lawrence",
-    src: "https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg",
-  },
-  {
-    name: "Audrey Hepburn",
-    src: "https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg",
-  },
-  {
-    name: "Anne Hathaway",
-    src: "https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg",
-  },
-  {
-    name: "Taylor Swift",
-    src: "https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg",
+    src: getAvatarUrl("Jennifer Lawrence")
   },
 ];
 </script>
