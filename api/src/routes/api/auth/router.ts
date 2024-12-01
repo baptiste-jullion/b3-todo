@@ -15,14 +15,13 @@ if (process.env.NODE_ENV === "development") {
 		res.json(users);
 	});
 
-  router.delete("/users", async (req, res) => {
-    const {ids}= req.body;
+	router.delete("/users", async (req, res) => {
+		const { ids } = req.body;
 
-    await User.deleteMany({_id: {$in: ids}});
+		await User.deleteMany({ _id: { $in: ids } });
 
-    res.json({message: "Users deleted"});
-  })
-
+		res.json({ message: "Users deleted" });
+	});
 }
 
 export default router;

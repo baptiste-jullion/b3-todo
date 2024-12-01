@@ -1,11 +1,5 @@
+import { createTag, deleteTag, getTagById, getTags, updateTag } from "@c/tag";
 import { Router } from "express";
-import {
-	createTag,
-	deleteTag,
-	getTagById,
-	getTags,
-	updateTag,
-} from "@c/tag";
 
 const router = Router();
 

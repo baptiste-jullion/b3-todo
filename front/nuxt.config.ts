@@ -10,7 +10,7 @@ export default defineNuxtConfig({
 		public: {
 			API_BASE_URL: process.env.NUXT_PUBLIC_API_BASE_URL,
 			UPLOADS_BASE_URL: process.env.NUXT_PUBLIC_UPLOADS_BASE_URL,
-			JWT_COOKIE_NAME:	process.env.NUXT_PUBLIC_JWT_COOKIE_NAME,
+			JWT_COOKIE_NAME: process.env.NUXT_PUBLIC_JWT_COOKIE_NAME,
 		},
 	},
 	postcss: {
