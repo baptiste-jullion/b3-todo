@@ -15,7 +15,7 @@ export default async (
 		const token = req.headers.authorization.split(" ")[1];
 		const decoded = jwt.verify(
 			token,
-			process.env.JWT_SECRET as string,
+			process.env.JWT_ACCESS_SECRET,
 		) as jwt.JwtPayload;
 
 		const user = await User.findById(decoded.id);

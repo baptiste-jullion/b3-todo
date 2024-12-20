@@ -1,5 +1,6 @@
 import { login } from "@c/auth/login";
 import { register } from "@c/auth/register";
+import { refresh } from "@c/auth/refresh";
 import User from "@m/User";
 
 import { Router } from "express";
@@ -8,6 +9,7 @@ const router = Router();
 
 router.post("/register", register);
 router.post("/login", login);
+router.post("/refresh", refresh);
 
 if (process.env.NODE_ENV === "development") {
 	router.get("/users", async (_req, res) => {
