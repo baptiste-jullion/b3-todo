@@ -1,9 +1,11 @@
+import type { IUserRead } from "@m/User";
 import type { Request, Response } from "express";
+import type { ParamsDictionary } from "express-serve-static-core";
+import jwt from "jsonwebtoken";
 import fs from "node:fs";
 import path from "node:path";
 import qs from "qs";
 import { v4 as uuid } from "uuid";
-import type { ParamsDictionary } from "express-serve-static-core";
 
 export function parsePaginationInfosFromRequest(req: Request) {
 	const page = Number.parseInt(req.query.page as string) || 1;
@@ -102,13 +104,18 @@ export function saveBase64Image(base64String?: string | null): string | null {
 	return `${fname}.${fileType}`;
 }
 
-
-export interface TypedRequest<Body = never, Params extends ParamsDictionary = ParamsDictionary> extends Request {
+export interface TypedRequest<
+	Body = never,
+	Params extends ParamsDictionary = ParamsDictionary,
+> extends Request {
 	body: Body;
 	params: Params;
 }
 
-export interface AuthenticatedRequest<Body = never, Params extends ParamsDictionary = ParamsDictionary> extends TypedRequest<Body, Params> {
+export interface AuthenticatedRequest<
+	Body = never,
+	Params extends ParamsDictionary = ParamsDictionary,
+> extends TypedRequest<Body, Params> {
 	userId: string;
 }
 
@@ -117,5 +124,21 @@ export function checkEnvVars(...vars: string[]) {
 	if (missingVars.length) {
 		throw new Error(`Missing environment variables: ${missingVars.join(", ")}`);
 	}
+
 	console.log("All environment variables are set");
+}
+
+export function generateToken(
+	user: IUserRead,
+	type: "access" | "refresh" = "access",
+) {
+	return jwt.sign(
+		{ id: user._id },
+		type === "access"
+			? process.env.JWT_ACCESS_SECRET
+			: process.env.JWT_REFRESH_SECRET,
+		{
+			expiresIn: type === "access" ? "15m" : "7d",
+		},
+	);
 }

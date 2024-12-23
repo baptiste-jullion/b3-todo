@@ -29,7 +29,6 @@ export const getNotes = async (
 		const fields = parseSelectedFieldsFromRequest(req);
 		const { limit, page } = parsePaginationInfosFromRequest(req);
 		const filter = parseFilterFromRequest(req);
-		filter.author = req.userId;
 
 		const count = await Note.countDocuments(filter);
 

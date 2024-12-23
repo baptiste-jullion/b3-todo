@@ -1,14 +1,21 @@
-import User, { type IUserWrite } from "@m/User";
+import User from "@m/User";
 import { APIError, type TypedRequest, generateToken } from "@u";
 import type { Response } from "express";
+import jwt from "jsonwebtoken";
 
-export const register = async (
-	req: TypedRequest<IUserWrite>,
-	res: Response,
-) => {
+export const refresh = async (req: TypedRequest, res: Response) => {
 	try {
-		const user = new User(req.body);
-		await user.save();
+		const refreshToken = req.cookies.refreshToken;
+		if (!refreshToken) throw new APIError(401, "No refresh token provided");
+
+		const decoded = jwt.verify(
+			refreshToken,
+			process.env.JWT_REFRESH_SECRET,
+		) as jwt.JwtPayload;
+
+		const user = await User.findById(decoded.id);
+
+		if (!user) throw new APIError(401, "Invalid refresh token");
 
 		res.cookie("refreshToken", generateToken(user, "refresh"), {
 			httpOnly: true,

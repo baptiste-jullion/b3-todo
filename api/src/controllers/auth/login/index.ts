@@ -1,8 +1,7 @@
 import User from "@m/User";
-import { APIError, type TypedRequest } from "@u";
+import { APIError, type TypedRequest, generateToken } from "@u";
 import argon from "argon2";
 import type { Response } from "express";
-import jwt from "jsonwebtoken";
 
 export const login = async (
 	req: TypedRequest<{
@@ -14,7 +13,12 @@ export const login = async (
 	const { email, password } = req.body;
 
 	try {
-		const user = await User.findOne({ email });
+		const user = await User.findOne({
+			email: {
+				$regex: email,
+				$options: "i",
+			},
+		});
 		if (!user) {
 			throw new APIError(404, "Email or password is invalid");
 		}
@@ -25,11 +29,14 @@ export const login = async (
 			throw new APIError(404, "Email or password is invalid");
 		}
 
-		const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
-			expiresIn: "1h",
+		res.cookie("refreshToken", generateToken(user, "refresh"), {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+			maxAge: 1000 * 60 * 60 * 24 * 7, // 7d
 		});
 
-		res.json({ token });
+		res.json({ token: generateToken(user) });
 	} catch (error) {
 		APIError.handleError(res, error);
 	}

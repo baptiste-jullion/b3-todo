@@ -1,5 +1,6 @@
 import type { INoteRead, INoteWrite } from "@m/Note";
 import type { ITagRead, ITagWrite } from "@m/Tag";
+import type { IUserWrite } from "@m/User";
 import qs from "qs";
 
 interface PaginationParams {
@@ -7,47 +8,72 @@ interface PaginationParams {
 	page: number;
 }
 
-interface PaginatedResponse<T> {
+export interface PaginatedResponse<T> {
 	count: number;
 	has_next: boolean;
 	has_previous: boolean;
 	results: T[];
 }
 
-interface APIResponseSuccess<T> {
+export interface APIResponseSuccess<T> {
 	success: true;
 	data: T;
 }
 
-interface APIResponseError {
+export interface APIResponseError {
 	success: false;
 	error: string;
+	response: Response;
 }
 
 class BaseAPI {
 	protected API_BASE_URL: string;
+	protected headers: Headers;
+
 	constructor(baseUrl: string) {
 		this.API_BASE_URL = baseUrl;
+		this.headers = new Headers({ "Content-Type": "application/json" });
 	}
 
 	protected async fetchApi<T>(
 		url: string,
 		options: RequestInit & { query?: URLSearchParams } = {},
 	) {
-		const response = await fetch(
+		const token = localStorage.getItem("access-token");
+		if (token) this.headers.set("Authorization", `Bearer ${token}`);
+
+		let response = await fetch(
 			`${this.API_BASE_URL}${url}${options.query ? `?${options.query.toString()}` : ""}`,
 			{
-				headers: {
-					"Content-Type": "application/json",
-				},
+				headers: this.headers,
+				credentials: "include",
 				...options,
 			},
 		);
+
+		if (response.status === 401) {
+			const refreshResponse = await this.refreshToken();
+
+			const token = localStorage.getItem("access-token");
+			if (token) this.headers.set("Authorization", `Bearer ${token}`);
+
+			if (refreshResponse.success) {
+				response = await fetch(
+					`${this.API_BASE_URL}${url}${options.query ? `?${options.query.toString()}` : ""}`,
+					{
+						headers: this.headers,
+						credentials: "include",
+						...options,
+					},
+				);
+			}
+		}
 
 		if (!response.ok) {
 			return {
 				success: false,
 				error: `Request failed with status ${response.status}: ${await response.text()}`,
+				response,
 			} as APIResponseError;
 		}
 
@@ -57,6 +83,32 @@ class BaseAPI {
 			success: true,
 			data,
 		} as APIResponseSuccess<T>;
+	}
+
+	protected async refreshToken(): Promise<
+		APIResponseSuccess<{ token: string }> | APIResponseError
+	> {
+		const response = await fetch(`${this.API_BASE_URL}/auth/refresh`, {
+			method: "POST",
+			headers: this.headers,
+			credentials: "include",
+		});
+
+		if (!response.ok) {
+			return {
+				success: false,
+				error: `Refresh token request failed with status ${response.status}: ${await response.text()}`,
+				response,
+			} as APIResponseError;
+		}
+
+		const data = await response.json();
+		localStorage.setItem("access-token", data.token);
+		this.headers.set("Authorization", `Bearer ${data.token}`);
+		return {
+			success: true,
+			data,
+		} as APIResponseSuccess<{ token: string }>;
 	}
 }
 
@@ -126,23 +178,50 @@ class Tags extends BaseAPI {
 }
 
 class Auth extends BaseAPI {
-	public async login(username: string, password: string) {
-		return await this.fetchApi<{ token: string }>("/auth/login", {
+	public async login(user: Pick<IUserWrite, "username" | "password">) {
+		const res = await this.fetchApi<{ token: string }>("/auth/login", {
 			method: "POST",
-			body: JSON.stringify({ username, password }),
+			body: JSON.stringify(user),
+			credentials: "include",
 		});
+
+		if (!res.success) return res;
+
+		localStorage.setItem("access-token", res.data.token);
+
+		return res;
 	}
 
-	public async register(username: string, password: string) {
-		return await this.fetchApi<{ token: string }>("/auth/register", {
+	public async register(user: IUserWrite) {
+		const res = await this.fetchApi<{ token: string }>("/auth/register", {
 			method: "POST",
-			body: JSON.stringify({ username, password }),
+			body: JSON.stringify(user),
+			credentials: "include",
 		});
+
+		if (!res.success) return res;
+
+		localStorage.setItem("access-token", res.data.token);
+
+		return res;
+	}
+
+	public async logout() {
+		localStorage.removeItem("access-token");
+		this.headers.delete("Authorization");
+		return { success: true };
 	}
 }
 
 export class API extends BaseAPI {
-	public notes = new Notes(this.API_BASE_URL);
-	public tags = new Tags(this.API_BASE_URL);
-	public auth = new Auth(this.API_BASE_URL);
+	public notes: Notes;
+	public tags: Tags;
+	public auth: Auth;
+
+	constructor(baseUrl: string) {
+		super(baseUrl);
+		this.notes = new Notes(this.API_BASE_URL);
+		this.tags = new Tags(this.API_BASE_URL);
+		this.auth = new Auth(this.API_BASE_URL);
+	}
 }

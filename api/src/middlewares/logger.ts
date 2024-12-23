@@ -15,7 +15,7 @@ export function logger(
 		const url = req.originalUrl;
 		const date = new Date().toISOString();
 
-		const log = `${date} ${method} ${statusCode} ${req.userId || 'Anonymous               '}${url} `;
+		const log = `${date} ${method} ${statusCode} ${req.userId || 'Anonymous               '} ${url} `;
 		const logsFolder = path.join(__dirname, "../../logs");
 
 		if (!fs.existsSync(logsFolder)) {

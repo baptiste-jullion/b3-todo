@@ -1,6 +1,6 @@
 import User from "@m/User";
 import { APIError } from "@u";
-import type { NextFunction, Response, Request } from "express";
+import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 export default async (
@@ -15,7 +15,7 @@ export default async (
 		const token = req.headers.authorization.split(" ")[1];
 		const decoded = jwt.verify(
 			token,
-			process.env.JWT_SECRET as string,
+			process.env.JWT_ACCESS_SECRET,
 		) as jwt.JwtPayload;
 
 		const user = await User.findById(decoded.id);
@@ -26,6 +26,10 @@ export default async (
 
 		next();
 	} catch (err) {
-		APIError.handleError(res, err);
+		let error = err;
+		if (err instanceof jwt.JsonWebTokenError) {
+			error = new APIError(401);
+		}
+		APIError.handleError(res, error);
 	}
 };

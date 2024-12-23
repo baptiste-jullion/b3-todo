@@ -37,7 +37,7 @@ const { state } = defineProps<{
 
 const el = ref<HTMLElement | null>(null);
 
-const { client } = useApi();
+const { api, handleAPIResponse } = useApi();
 const bus = useEventBus(`refresh:notes/${state}`);
 const { top } = useElementBounding(el);
 
@@ -46,20 +46,17 @@ const {
   refresh,
   status,
 } = await useAsyncData(`notes/${state}`, async () => {
-  const res = await client.notes.list({
-    fields: ["_id"],
-    filter: {
-      state,
-    },
-    pagination: {
-      limit: 100,
-    },
-  });
-  if (!res.success) {
-    throw new Error(res.error);
-  }
-
-  return res.data;
+  return handleAPIResponse(
+    await api.notes.list({
+      fields: ["_id"],
+      filter: {
+        state,
+      },
+      pagination: {
+        limit: 100,
+      },
+    }),
+  );
 });
 
 const hasMore = computed(() => notes.value?.has_next || false);

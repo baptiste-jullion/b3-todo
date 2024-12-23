@@ -4,7 +4,7 @@ import mongoose, { Schema } from "mongoose";
 export interface IUserRead {
 	_id: string;
 	email: string;
-	display_name: string;
+	username: string;
 	password: string;
 }
 
@@ -28,7 +28,7 @@ const UserSchema: Schema = new Schema(
 			required: true,
 			max: 100,
 		},
-		display_name: {
+		username: {
 			type: String,
 			required: true,
 			max: 100,

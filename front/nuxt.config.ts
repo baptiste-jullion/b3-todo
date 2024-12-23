@@ -24,4 +24,5 @@ export default defineNuxtConfig({
 				? ["naive-ui", "vueuc", "@css-render/vue3-ssr"]
 				: [],
 	},
+	ssr: false,
 });
