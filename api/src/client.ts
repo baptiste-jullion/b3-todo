@@ -8,19 +8,19 @@ interface PaginationParams {
 	page: number;
 }
 
-interface PaginatedResponse<T> {
+export interface PaginatedResponse<T> {
 	count: number;
 	has_next: boolean;
 	has_previous: boolean;
 	results: T[];
 }
 
-interface APIResponseSuccess<T> {
+export interface APIResponseSuccess<T> {
 	success: true;
 	data: T;
 }
 
-interface APIResponseError {
+export interface APIResponseError {
 	success: false;
 	error: string;
 	response: Response;
@@ -30,23 +30,44 @@ class BaseAPI {
 	protected API_BASE_URL: string;
 	protected headers: Headers;
 
-	constructor(baseUrl: string, headers?: Headers) {
+	constructor(baseUrl: string) {
 		this.API_BASE_URL = baseUrl;
-		this.headers =
-			headers || new Headers({ "Content-Type": "application/json" });
+		this.headers = new Headers({ "Content-Type": "application/json" });
 	}
 
 	protected async fetchApi<T>(
 		url: string,
 		options: RequestInit & { query?: URLSearchParams } = {},
 	) {
-		const response = await fetch(
+		const token = localStorage.getItem("access-token");
+		if (token) this.headers.set("Authorization", `Bearer ${token}`);
+
+		let response = await fetch(
 			`${this.API_BASE_URL}${url}${options.query ? `?${options.query.toString()}` : ""}`,
 			{
 				headers: this.headers,
+				credentials: "include",
 				...options,
 			},
 		);
+
+		if (response.status === 401) {
+			const refreshResponse = await this.refreshToken();
+
+			const token = localStorage.getItem("access-token");
+			if (token) this.headers.set("Authorization", `Bearer ${token}`);
+
+			if (refreshResponse.success) {
+				response = await fetch(
+					`${this.API_BASE_URL}${url}${options.query ? `?${options.query.toString()}` : ""}`,
+					{
+						headers: this.headers,
+						credentials: "include",
+						...options,
+					},
+				);
+			}
+		}
 
 		if (!response.ok) {
 			return {
@@ -62,6 +83,32 @@ class BaseAPI {
 			success: true,
 			data,
 		} as APIResponseSuccess<T>;
+	}
+
+	protected async refreshToken(): Promise<
+		APIResponseSuccess<{ token: string }> | APIResponseError
+	> {
+		const response = await fetch(`${this.API_BASE_URL}/auth/refresh`, {
+			method: "POST",
+			headers: this.headers,
+			credentials: "include",
+		});
+
+		if (!response.ok) {
+			return {
+				success: false,
+				error: `Refresh token request failed with status ${response.status}: ${await response.text()}`,
+				response,
+			} as APIResponseError;
+		}
+
+		const data = await response.json();
+		localStorage.setItem("access-token", data.token);
+		this.headers.set("Authorization", `Bearer ${data.token}`);
+		return {
+			success: true,
+			data,
+		} as APIResponseSuccess<{ token: string }>;
 	}
 }
 
@@ -135,11 +182,12 @@ class Auth extends BaseAPI {
 		const res = await this.fetchApi<{ token: string }>("/auth/login", {
 			method: "POST",
 			body: JSON.stringify(user),
+			credentials: "include",
 		});
 
 		if (!res.success) return res;
 
-		this.headers.set("Authorization", `Bearer ${res.data.token}`);
+		localStorage.setItem("access-token", res.data.token);
 
 		return res;
 	}
@@ -148,22 +196,20 @@ class Auth extends BaseAPI {
 		const res = await this.fetchApi<{ token: string }>("/auth/register", {
 			method: "POST",
 			body: JSON.stringify(user),
+			credentials: "include",
 		});
 
 		if (!res.success) return res;
 
-		this.headers.set("Authorization", `Bearer ${res.data.token}`);
+		localStorage.setItem("access-token", res.data.token);
 
 		return res;
 	}
 
 	public async logout() {
+		localStorage.removeItem("access-token");
 		this.headers.delete("Authorization");
 		return { success: true };
-	}
-
-	public async injectToken(token: string) {
-		this.headers.set("Authorization", `Bearer ${token}`);
 	}
 }
 
@@ -174,8 +220,8 @@ export class API extends BaseAPI {
 
 	constructor(baseUrl: string) {
 		super(baseUrl);
-		this.notes = new Notes(this.API_BASE_URL, this.headers);
-		this.tags = new Tags(this.API_BASE_URL, this.headers);
-		this.auth = new Auth(this.API_BASE_URL, this.headers);
+		this.notes = new Notes(this.API_BASE_URL);
+		this.tags = new Tags(this.API_BASE_URL);
+		this.auth = new Auth(this.API_BASE_URL);
 	}
 }
