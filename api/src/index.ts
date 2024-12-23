@@ -2,6 +2,7 @@ import { connectDB } from "@db/index";
 import { logger } from "@mw/logger";
 import apiRouter from "@r/api/router";
 import { checkEnvVars } from "@u";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import fs from "node:fs";
@@ -14,7 +15,8 @@ checkEnvVars(
 	"API_BASE_ROUTE",
 	"API_UPLOADS_ROUTE",
 	"API_PROTOCOL",
-	"JWT_SECRET",
+	"JWT_ACCESS_SECRET",
+	"JWT_REFRESH_SECRET",
 );
 
 connectDB();
@@ -25,8 +27,14 @@ if (!fs.existsSync(uploadsFolder)) {
 }
 
 const app = express();
+app.use(cookieParser());
 app.use(express.json({ limit: "50mb" }));
-app.use(cors());
+app.use(
+	cors({
+		origin: "http://localhost:12345",
+		credentials: true,
+	}),
+);
 app.use(logger);
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
