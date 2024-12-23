@@ -32,7 +32,7 @@
     </div>
     <div class="flex justify-end pt-4">
       <n-avatar-group :options="users" :size="32">
-        <template #avatar="{ option: { name,src } }">
+        <template #avatar="{ option: { name, src } }">
           <n-tooltip>
             <template #trigger>
               <n-avatar :src />
@@ -51,6 +51,7 @@ import { useAsyncData } from "#app";
 import type { INoteRead } from "@b3-todo/api";
 import { Clock24Regular } from "@vicons/fluent";
 import { useTimeAgo } from "@vueuse/core";
+import { toSvg } from "jdenticon";
 import {
   NAvatar,
   NAvatarGroup,
@@ -63,9 +64,8 @@ import {
 import { computed, ref } from "vue";
 import NoteDetailsDrawer from "~/components/Note/DetailsDrawer.vue";
 import useApi from "~/composables/useApi";
-import { toSvg } from "jdenticon";
 
-const { api } = useApi();
+const { api, handleAPIResponse } = useApi();
 
 const { noteId } = defineProps<{
   noteId: INoteRead["_id"];
@@ -73,12 +73,7 @@ const { noteId } = defineProps<{
 const emit = defineEmits(["state-updated"]);
 
 const { data: note, refresh } = await useAsyncData(noteId, async () => {
-  const res = await api.notes.get(noteId);
-
-  if (!res.success) {
-    throw new Error(res.error);
-  }
-  return res.data;
+  return handleAPIResponse(await api.notes.get(noteId));
 });
 
 const timeAgo = useTimeAgo(computed(() => note.value?.dueDate || new Date()));
@@ -89,14 +84,12 @@ const getAvatarUrl = (src: string) => {
   return `data:image/svg+xml,${encodeURIComponent(toSvg(src, 32))}`;
 };
 
-const users = [
-  {
-    name: "Leonardo DiCaprio",
-    src: getAvatarUrl("Leonardo DiCaprio")
-  },
-  {
-    name: "Jennifer Lawrence",
-    src: getAvatarUrl("Jennifer Lawrence")
-  },
-];
+const users = computed(() => {
+  return [
+    {
+      name: note.value?.author?.username,
+      src: getAvatarUrl(note.value?.author?.username),
+    },
+  ];
+});
 </script>
