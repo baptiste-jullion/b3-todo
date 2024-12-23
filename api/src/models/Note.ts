@@ -1,4 +1,5 @@
 import type { ITagRead } from "@m/Tag";
+import type { IUserRead } from "@m/User";
 import mongoose, { Schema } from "mongoose";
 
 export interface INoteRead {
@@ -12,7 +13,7 @@ export interface INoteRead {
 	tasks?: string[];
 	title: string;
 	updatedAt: Date;
-	author: string;
+	author: Omit<IUserRead, "password">;
 }
 
 export type INoteWrite = Omit<
@@ -44,12 +45,18 @@ const NoteSchema: Schema = new Schema(
 );
 
 NoteSchema.pre("findOne", function (next) {
-	this.populate("tags");
+	this.populate({
+		path: "tags author",
+		select: "-password",
+	});
 	next();
 });
 
 NoteSchema.pre("find", function (next) {
-	this.populate("tags");
+	this.populate({
+		path: "tags author",
+		select: "-password",
+	});
 	next();
 });
 
