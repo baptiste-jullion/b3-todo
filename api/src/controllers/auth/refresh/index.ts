@@ -17,7 +17,14 @@ export const refresh = async (req: TypedRequest, res: Response) => {
 
 		if (!user) throw new APIError(401, "Invalid refresh token");
 
-		res.json({ token: generateToken(user, "refresh") });
+		res.cookie("refreshToken", generateToken(user, "refresh"), {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+			maxAge: 1000 * 60 * 60 * 24 * 7, // 7d
+		});
+
+		res.json({ token: generateToken(user) });
 	} catch (error) {
 		APIError.handleError(res, error);
 	}

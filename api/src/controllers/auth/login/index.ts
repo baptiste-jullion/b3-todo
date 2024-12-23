@@ -13,7 +13,12 @@ export const login = async (
 	const { email, password } = req.body;
 
 	try {
-		const user = await User.findOne({ email });
+		const user = await User.findOne({
+			email: {
+				$regex: email,
+				$options: "i",
+			},
+		});
 		if (!user) {
 			throw new APIError(404, "Email or password is invalid");
 		}
@@ -26,9 +31,9 @@ export const login = async (
 
 		res.cookie("refreshToken", generateToken(user, "refresh"), {
 			httpOnly: true,
-			sameSite: "strict",
-			secure: true,
-			path: "/auth/refresh",
+			secure: process.env.NODE_ENV === "production",
+			sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+			maxAge: 1000 * 60 * 60 * 24 * 7, // 7d
 		});
 
 		res.json({ token: generateToken(user) });
