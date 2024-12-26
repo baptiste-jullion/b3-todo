@@ -1,4 +1,5 @@
 import type { ITagRead } from "@m/Tag";
+import type { ITaskRead, ITaskWrite } from "@m/Task";
 import type { IUserRead } from "@m/User";
 import mongoose, { Schema } from "mongoose";
 
@@ -10,7 +11,7 @@ export interface INoteRead {
 	dueDate?: number;
 	state?: "todo" | "in_progress" | "completed";
 	tags?: ITagRead[];
-	tasks?: string[];
+	tasks?: ITaskRead[];
 	title: string;
 	updatedAt: Date;
 	author: Omit<IUserRead, "password">;
@@ -18,9 +19,10 @@ export interface INoteRead {
 
 export type INoteWrite = Omit<
 	INoteRead,
-	"_id" | "createdAt" | "updatedAt" | "tags"
+	"_id" | "createdAt" | "updatedAt" | "tags" | "author" | "tasks"
 > & {
 	tags?: string[];
+	tasks?: ITaskWrite[];
 };
 
 const NoteSchema: Schema = new Schema(
@@ -46,7 +48,7 @@ const NoteSchema: Schema = new Schema(
 
 NoteSchema.pre("findOne", function (next) {
 	this.populate({
-		path: "tags author",
+		path: "author tags tasks",
 		select: "-password",
 	});
 	next();
@@ -54,7 +56,7 @@ NoteSchema.pre("findOne", function (next) {
 
 NoteSchema.pre("find", function (next) {
 	this.populate({
-		path: "tags author",
+		path: "author tags tasks",
 		select: "-password",
 	});
 	next();
