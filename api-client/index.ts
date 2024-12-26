@@ -1,7 +1,7 @@
-import { Auth } from "@cl/src/auth";
-import { BaseAPI } from "@cl/src/base";
-import { Notes } from "@cl/src/notes";
-import { Tags } from "@cl/src/tags";
+import { Auth } from "./src/auth";
+import { BaseAPI } from "./src/base";
+import { Notes } from "./src/notes";
+import { Tags } from "./src/tags";
 
 export class API extends BaseAPI {
 	public notes: Notes;

@@ -1,7 +1,10 @@
-import type { PaginatedResponse, PaginationParams } from "@cl/src/base";
-import { BaseAPI } from "@cl/src/base";
-import type { INoteRead, INoteWrite } from "@m/Note";
+import type { INoteRead, INoteWrite } from "@b3-todo/api";
 import qs from "qs";
+import {
+	BaseAPI,
+	type PaginatedResponse,
+	type PaginationParams,
+} from "../../src/base";
 
 export class Notes extends BaseAPI {
 	public async list<T extends keyof INoteRead>(
