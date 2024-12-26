@@ -2,8 +2,6 @@ export type { INoteRead, INoteWrite } from "@m/Note";
 export type { ITagRead, ITagWrite } from "@m/Tag";
 export type { ITaskRead, ITaskWrite } from "@m/Task";
 export type { IUserRead, IUserWrite } from "@m/User";
-export { API } from "@cl/index";
-
 declare global {
 	namespace NodeJS {
 		interface ProcessEnv {

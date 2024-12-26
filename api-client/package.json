@@ -1,0 +1,14 @@
+{
+  "name": "@b3-todo/api-client",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@b3-todo/api": "link:@b3-todo/api"
+  }
+}

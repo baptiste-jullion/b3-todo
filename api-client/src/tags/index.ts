@@ -1,6 +1,5 @@
-import type { PaginatedResponse } from "@cl/src/base";
-import { BaseAPI } from "@cl/src/base";
-import type { ITagRead, ITagWrite } from "@m/Tag";
+import type { ITagRead, ITagWrite } from "@b3-todo/api";
+import { BaseAPI, type PaginatedResponse } from "../../src/base";
 
 export class Tags extends BaseAPI {
 	public async list() {

@@ -1,5 +1,5 @@
-import { BaseAPI } from "@cl/src/base";
-import type { IUserWrite } from "@m/User";
+import { BaseAPI } from "../../src/base";
+import type { IUserWrite } from "@b3-todo/api";
 
 export class Auth extends BaseAPI {
 	public async login(user: Pick<IUserWrite, "username" | "password">) {
