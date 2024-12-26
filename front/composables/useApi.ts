@@ -12,17 +12,15 @@ export default function useApi() {
 	const handleAPIResponse = async <T>(
 		response: APIResponseSuccess<T> | APIResponseError,
 	) => {
-		if (response.success) {
-			return response.data;
-		}
+		if (response.success) return response.data;
 
 		switch (response.response.status) {
 			case 401:
 				await disconnect();
 				break;
-			default:
-				throw new Error(response.error);
 		}
+
+		throw new Error(response.error);
 	};
 
 	return {
