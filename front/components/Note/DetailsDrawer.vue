@@ -22,6 +22,14 @@
           <n-select :options="stateOptions" v-model:value="formValue.state" />
         </n-form-item>
         <TagsSelectInput v-model="formValue.tags" />
+        <!-- <n-form-item v-if="formValue.tasks?.length" label="Tasks" path="tasks">
+          <n-checkbox
+            v-for="({label, _id}, i) in formValue.tasks"
+            :label
+            :value="_id"
+            v-model:checked="formValue.tasks[i].completed"
+          />
+        </n-form-item> -->
       </n-form>
       <template #footer>
         <n-popconfirm @positive-click="deleteNote">
@@ -96,7 +104,7 @@ const rules = {
 };
 const formRef = ref<FormInst>();
 const formValue = ref<Omit<INoteWrite, "tags"> & { tags: string[] }>({
-  ...omit(note, ["_id", "createdAt", "updatedAt", "__v", "tags"]),
+  ...omit(note, ["_id", "createdAt", "updatedAt", "tags"]),
   tags: note.tags?.map((tag) => tag._id.toString()) || [],
 });
 
@@ -134,7 +142,7 @@ const handleSave = async () => {
 
   const diff = objectDiff(
     formValue.value,
-    omit(note, ["_id", "createdAt", "updatedAt", "__v"]),
+    omit(note, ["_id", "createdAt", "updatedAt"]),
   );
 
   if (Object.keys(diff).length === 0) {

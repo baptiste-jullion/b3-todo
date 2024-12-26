@@ -1,22 +1,39 @@
+import type { IUserRead } from "@m/User";
 import mongoose, { Schema } from "mongoose";
 
-export interface ITask {
+export interface ITaskRead {
 	_id: mongoose.Types.ObjectId;
 	label: string;
 	completed: boolean;
-	note: mongoose.Types.ObjectId;
+	completedBy: IUserRead;
 }
+
+export type ITaskWrite = string;
 
 const TaskSchema: Schema = new Schema(
 	{
 		label: { type: String, required: true },
 		completed: { type: Boolean, default: false },
-		note: { type: mongoose.Schema.Types.ObjectId, ref: "Note", required: true },
+		completedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 	},
 	{
 		versionKey: false,
 	},
 );
 
-const Task = mongoose.model<ITask>("Task", TaskSchema);
+TaskSchema.pre("findOne", function (next) {
+	this.populate({
+		path: "completedBy",
+	});
+	next();
+});
+
+TaskSchema.pre("find", function (next) {
+	this.populate({
+		path: "completedBy",
+	});
+	next();
+});
+
+const Task = mongoose.model<ITaskRead>("Task", TaskSchema);
 export default Task;

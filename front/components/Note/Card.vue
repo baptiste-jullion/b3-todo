@@ -30,7 +30,24 @@
         {{ tag.title }}
       </n-tag>
     </div>
-    <div class="flex justify-end pt-4">
+    <div class="flex items-center justify-between pt-4">
+      <div v-if="note.tasks?.length" class="flex items-center gap-2">
+        <n-progress
+          type="circle"
+          :offset-degree="180"
+          class="!w-4"
+          :stroke-width="24"
+          status="success"
+          :show-indicator="false"
+          :percentage="tasks.completedPercentage"
+        />
+
+        <small>
+          <sup>{{ tasks.completed }}</sup
+          >/<sub>{{ tasks.total }}</sub> tasks
+        </small>
+      </div>
+      <div v-else></div>
       <n-avatar-group :options="users" :size="32">
         <template #avatar="{ option: { name, src } }">
           <n-tooltip>
@@ -57,6 +74,7 @@ import {
   NAvatarGroup,
   NCard,
   NIcon,
+  NProgress,
   NTag,
   NText,
   NTooltip,
@@ -72,11 +90,22 @@ const { noteId } = defineProps<{
 }>();
 const emit = defineEmits(["state-updated"]);
 
-const { data: note, refresh } = await useAsyncData(noteId, async () => {
-  return handleAPIResponse(await api.notes.get(noteId));
-});
+const { data: note, refresh } = await useAsyncData(noteId, async () =>
+  handleAPIResponse(await api.notes.get(noteId)),
+);
 
 const timeAgo = useTimeAgo(computed(() => note.value?.dueDate || new Date()));
+const tasks = computed(() => {
+  const res = {
+    completed: note.value?.tasks?.filter((task) => task.completed).length || 0,
+    total: note.value?.tasks?.length || 0,
+    completedPercentage: 0,
+  };
+
+  res.completedPercentage = (res.completed / res.total) * 100;
+
+  return res;
+});
 
 const showDrawer = ref(false);
 
