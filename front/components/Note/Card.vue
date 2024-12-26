@@ -117,7 +117,7 @@ const users = computed(() => {
   return [
     {
       name: note.value?.author?.username,
-      src: getAvatarUrl(note.value?.author?.username),
+      src: getAvatarUrl(note.value?.author.username || ""),
     },
   ];
 });

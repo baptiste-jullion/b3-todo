@@ -17,6 +17,7 @@
 			"@mw/*": ["src/middlewares/*"],
 			"@r/*": ["src/routes/*"],
 			"@c/*": ["src/controllers/*"],
+			"@cl/*": ["src/client/*"],
 			"@u": ["src/utils"]
 		},
 		"skipLibCheck": true,
