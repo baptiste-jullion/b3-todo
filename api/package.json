@@ -4,6 +4,13 @@
 	"module": "index.ts",
 	"type": "module",
 	"types": "dist/types.d.ts",
+	"main": "dist/types.js",
+	"exports": {
+		".": {
+			"import": "./dist/types.js",
+			"require": "./dist/types.js"
+		}
+	},
 	"scripts": {
 		"dev": "NODE_ENV=development bun --env-file=../.env --hot src/index.ts",
 		"dev:api": "NODE_ENV=development concurrently 'bun tsc --watch' 'bun tsc-alias --watch'",
