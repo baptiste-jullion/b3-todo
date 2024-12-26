@@ -1,5 +1,6 @@
 import Note, { type INoteWrite } from "@m/Note";
-import Tag, { type ITagWrite } from "@m/Tag";
+import Tag from "@m/Tag";
+import Task, { type ITaskWrite } from "@m/Task";
 import {
 	APIError,
 	type TypedRequest,
@@ -33,7 +34,6 @@ export const getNotes = async (
 		const count = await Note.countDocuments(filter);
 
 		if (count === 0 || (page - 1) * limit >= count) throw new APIError(404);
-
 
 		const notes = await Note.find(filter, fields)
 			.limit(limit)
@@ -76,7 +76,7 @@ async function handleTags(tags: string[]): Promise<string[]> {
 						tagIds.push(existingTag._id.toString());
 					}
 				} else {
-					const existingTag = new Tag({ title: tag } as ITagWrite);
+					const existingTag = new Tag({ title: tag });
 					await existingTag.save();
 					tagIds.push(existingTag._id.toString());
 				}
@@ -85,6 +85,17 @@ async function handleTags(tags: string[]): Promise<string[]> {
 	}
 
 	return tagIds;
+}
+
+async function handleTasks(tasks: ITaskWrite[]): Promise<string[]> {
+	const taskIds: string[] = [];
+	for (const task of tasks) {
+		const newTask = new Task({ label: task });
+		await newTask.save();
+		taskIds.push(newTask._id.toString());
+	}
+
+	return taskIds;
 }
 
 export const createNote = async (
@@ -96,6 +107,10 @@ export const createNote = async (
 
 		if (req.body.tags) {
 			req.body.tags = await handleTags(req.body.tags);
+		}
+
+		if (req.body.tasks) {
+			req.body.tasks = await handleTasks(req.body.tasks);
 		}
 
 		const note = new Note({ ...req.body, author: req.userId });
