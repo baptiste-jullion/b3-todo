@@ -62,6 +62,13 @@
             class="w-full"
           />
         </n-form-item>
+        <n-form-item label="Tasks" path="tasks">
+          <n-dynamic-input
+            v-model:value="formValue.tasks"
+            placeholder="New task..."
+            show-sort-button
+          />
+        </n-form-item>
       </n-form>
       <template #action>
         <n-button @click="handleValidateClick"> Validate </n-button>
@@ -85,6 +92,7 @@ import {
   NModal,
   NUpload,
   NUploadDragger,
+  NDynamicInput,
   type UploadFileInfo,
   useMessage,
 } from "naive-ui";
@@ -106,6 +114,7 @@ const defaultValues: INoteWrite = {
   description: "",
   cover: undefined,
   dueDate: undefined,
+  tasks: [""],
 };
 const rules = {
   title: [{ required: true }],
