@@ -7,12 +7,9 @@ import {
 	parseFilterFromRequest,
 	parsePaginationInfosFromRequest,
 	parseSelectedFieldsFromRequest,
-	saveBase64Image,
 } from "@u";
 import type { Response } from "express";
 import mongoose from "mongoose";
-import fs from "node:fs";
-import path from "node:path";
 
 export const getNotes = async (
 	req: TypedRequest<
@@ -103,8 +100,6 @@ export const createNote = async (
 	res: Response,
 ) => {
 	try {
-		req.body.cover = saveBase64Image(req.body.cover);
-
 		if (req.body.tags) {
 			req.body.tags = await handleTags(req.body.tags);
 		}
@@ -127,7 +122,6 @@ export const updateNote = async (
 ) => {
 	try {
 		const { id } = req.params;
-		req.body.cover = saveBase64Image(req.body.cover);
 
 		if (req.body.tags) {
 			req.body.tags = await handleTags(req.body.tags);
@@ -151,10 +145,7 @@ export const deleteNote = async (
 ) => {
 	try {
 		const { id } = req.params;
-		const note = await Note.findByIdAndDelete(id);
-		if (note?.cover) {
-			fs.unlinkSync(path.join(__dirname, `../../../uploads/${note.cover}`));
-		}
+		await Note.findByIdAndDelete(id);
 		res.json({ message: "Note deleted" });
 	} catch (error) {
 		APIError.handleError(res, error);
