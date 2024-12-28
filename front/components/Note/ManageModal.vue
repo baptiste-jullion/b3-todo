@@ -74,7 +74,7 @@ const defaultValues: INoteWrite = {
   title: "",
   description: "",
   dueDate: undefined,
-  tasks: [""],
+  tasks: [],
 };
 const rules = {
   title: [{ required: true }],

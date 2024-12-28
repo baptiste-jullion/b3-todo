@@ -5,6 +5,7 @@ import {
 	type PaginatedResponse,
 	type PaginationParams,
 } from "../../src/base";
+import { Tasks } from "./tasks";
 
 export class Notes extends BaseAPI {
 	public async list<T extends keyof INoteRead>(
@@ -52,4 +53,6 @@ export class Notes extends BaseAPI {
 			body: JSON.stringify(note),
 		});
 	}
+
+	public tasks = new Tasks(this.API_BASE_URL);
 }

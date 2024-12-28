@@ -49,3 +49,31 @@ export const deleteTask = async (req: Request, res: Response) => {
 		res.status(404).json({ message: "Task not found" });
 	}
 };
+
+export const completeTask = async (req: Request, res: Response) => {
+	try {
+		const { id } = req.params;
+		const task = await Task.findByIdAndUpdate(
+			id,
+			{ completed: true },
+			{ new: true },
+		);
+		res.json(task);
+	} catch (error) {
+		res.status(404).json({ message: "Task not found" });
+	}
+}
+
+export const uncompleteTask = async (req: Request, res: Response) => {
+	try {
+		const { id } = req.params;
+		const task = await Task.findByIdAndUpdate(
+			id,
+			{ completed: false },
+			{ new: true },
+		);
+		res.json(task);
+	} catch (error) {
+		res.status(404).json({ message: "Task not found" });
+	}
+}
