@@ -11,8 +11,7 @@
 		"start": "bun run build && bun --env-file=../.env.production .output/server/index.mjs"
 	},
 	"dependencies": {
-		"@b3-todo/api": "link:@b3-todo/api",
-		"@b3-todo/api-client": "link:@b3-todo/api-client",
+		"@b3-todo/api-sdk": "link:@b3-todo/api-sdk",
 		"@vueuse/core": "^12.2.0",
 		"jdenticon": "^3.3.0",
 		"naive-ui": "^2.40.4",

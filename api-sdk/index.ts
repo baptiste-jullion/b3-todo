@@ -3,6 +3,8 @@ import { BaseAPI } from "./src/base";
 import { Notes } from "./src/notes";
 import { Tags } from "./src/tags";
 
+export * from "@b3-todo/api";
+
 export class API extends BaseAPI {
 	public notes: Notes;
 	public tags: Tags;
