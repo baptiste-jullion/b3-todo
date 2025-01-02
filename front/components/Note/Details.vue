@@ -5,11 +5,34 @@
     preset="card"
     class="max-w-xl"
   >
-    <n-text>
+    <n-select
+      class="mb-3"
+      v-model:value="note.state"
+      :options="[
+        {
+          label: 'Todo',
+          value: 'todo',
+        },
+        {
+          label: 'In Progress',
+          value: 'in_progress',
+        },
+        {
+          label: 'Completed',
+          value: 'completed',
+        },
+      ]"
+      @update:value="handleStateUpdate(note._id, $event)"
+    >
+    </n-select>
+    <div v-if="note.tags?.length" class="mb-3 flex flex-wrap gap-2">
+      <n-tag v-for="tag in note.tags" type="info">
+        {{ tag.title }}
+      </n-tag>
+    </div>
+    <n-text tag="p" class="mb-2">
       {{ note.description }}
     </n-text>
-    <!-- <n-select :options="stateOptions" v-model:value="formValue.state" />
-      <TagsSelectInput v-model="formValue.tags" /> -->
     <n-table size="small" v-if="tasks">
       <thead>
         <tr>
@@ -38,7 +61,12 @@
               :label="task.label"
               v-model:checked="task.completed"
               @update:checked="handleCheck(task._id, $event)"
-              class="w-full [&>span]:w-full"
+              :class="[
+                'w-full [&>span]:w-full',
+                {
+                  '[&>span]:line-through': task.completed,
+                },
+              ]"
             />
           </td>
         </tr>
@@ -55,7 +83,9 @@ import {
   NModal,
   NProgress,
   NTable,
+  NTag,
   NText,
+  NSelect,
   useMessage,
 } from "naive-ui";
 import useApi from "~/composables/useApi";
@@ -64,8 +94,9 @@ import useUtils from "~/composables/useUtils";
 const { api } = useApi();
 const { calculatePercentage } = useUtils();
 
-import { computed } from "vue";
 import { useAsyncData } from "#app";
+import { computed } from "vue";
+import { useEventBus } from "@vueuse/core";
 const show = defineModel<boolean>({ required: true });
 const message = useMessage();
 
@@ -92,7 +123,28 @@ const { refresh: refreshTags } = await useAsyncData(
 );
 
 const handleCheck = async (taskId: ITaskRead["_id"], state: boolean) => {
-  state ? await api.notes.tasks.complete(taskId) : await api.notes.tasks.uncomplete(taskId);
-  console.log("Task checked", taskId, state);
+  const res = state
+    ? await api.notes.tasks.complete(taskId)
+    : await api.notes.tasks.uncomplete(taskId);
+  if (!res.success) {
+    message.error(res.error);
+    return;
+  }
+  emit("updated");
+};
+
+const handleStateUpdate = async (
+  noteId: INoteRead["_id"],
+  state: "todo" | "in_progress" | "completed",
+) => {
+  const res = await api.notes.update(noteId, { state });
+  if (!res.success) {
+    message.error(res.error);
+    return;
+  }
+  message.success("Note state updated");
+  useEventBus("refresh:notes/todo").emit();
+  useEventBus("refresh:notes/in_progress").emit();
+  useEventBus("refresh:notes/completed").emit();
 };
 </script>

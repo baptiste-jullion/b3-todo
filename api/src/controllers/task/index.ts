@@ -1,4 +1,5 @@
 import Task from "@m/Task";
+import type { AuthenticatedRequest } from "@u";
 import type { Request, Response } from "express";
 
 export const getTasks = async (_req: Request, res: Response) => {
@@ -55,7 +56,7 @@ export const completeTask = async (req: Request, res: Response) => {
 		const { id } = req.params;
 		const task = await Task.findByIdAndUpdate(
 			id,
-			{ completed: true },
+			{ completed: true, completedBy: (req as AuthenticatedRequest).userId },
 			{ new: true },
 		);
 		res.json(task);
@@ -69,7 +70,7 @@ export const uncompleteTask = async (req: Request, res: Response) => {
 		const { id } = req.params;
 		const task = await Task.findByIdAndUpdate(
 			id,
-			{ completed: false },
+			{ completed: false, completedBy: null },
 			{ new: true },
 		);
 		res.json(task);

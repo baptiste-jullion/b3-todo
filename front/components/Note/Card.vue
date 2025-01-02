@@ -58,13 +58,12 @@
         </template>
       </n-avatar-group>
     </div>
-    <note-details :note v-model="showDetails" @updated="refresh" />
+    <note-details :note v-model="showDetails" @updated="refresh"  />
   </n-card>
 </template>
 
 <script setup lang="ts">
-import { useAsyncData } from "#app";
-import type { INoteRead } from "@b3-todo/api";
+import type { INoteRead } from "@b3-todo/api-sdk";
 import { Clock24Regular } from "@vicons/fluent";
 import { useTimeAgo } from "@vueuse/core";
 import { toSvg } from "jdenticon";
@@ -82,6 +81,7 @@ import { computed, ref } from "vue";
 import NoteDetails from "~/components/Note/Details.vue";
 import useApi from "~/composables/useApi";
 import useUtils from "~/composables/useUtils";
+import { useAsyncData } from "#app";
 
 const { api, handleAPIResponse } = useApi();
 const { calculatePercentage } = useUtils();
@@ -107,11 +107,25 @@ const getAvatarUrl = (src: string) => {
 };
 
 const users = computed(() => {
-  return [
+  const u = [
     {
       name: note.value?.author?.username,
       src: getAvatarUrl(note.value?.author.username || ""),
     },
   ];
+
+  if (!note.value?.tasks) return u;
+  for (const task of note.value.tasks) {
+    if (task.completedBy) {
+      u.push({
+        name: task.completedBy.username,
+        src: getAvatarUrl(task.completedBy.username),
+      });
+    }
+  }
+
+  return Array.from(new Set(u.map((u) => u.name))).map((name) =>
+    u.find((u) => u.name === name),
+  );
 });
 </script>
