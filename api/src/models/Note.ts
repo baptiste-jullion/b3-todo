@@ -5,7 +5,6 @@ import mongoose, { Schema } from "mongoose";
 
 export interface INoteRead {
 	_id: string;
-	cover?: string | null;
 	createdAt: Date;
 	description: string;
 	dueDate?: number;
@@ -29,7 +28,6 @@ const NoteSchema: Schema = new Schema(
 	{
 		title: { type: String, required: true },
 		description: { type: String },
-		cover: { type: String },
 		tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
 		tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
 		dueDate: { type: Number },

@@ -1,5 +1,5 @@
 import { defineNuxtPlugin, useRuntimeConfig } from "#app";
-import { API } from "@b3-todo/api-client";
+import { API } from "@b3-todo/api-sdk";
 
 export default defineNuxtPlugin({
 	name: "api",

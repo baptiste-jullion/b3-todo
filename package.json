@@ -1,7 +1,7 @@
 {
 	"name": "b3-todo",
 	"version": "1.0.0",
-	"workspaces": ["tests", "api", "front", "api-client"],
+	"workspaces": ["tests", "api", "front", "api-sdk"],
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"concurrently": "^9.1.0",

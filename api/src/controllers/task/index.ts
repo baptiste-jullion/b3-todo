@@ -1,4 +1,5 @@
 import Task from "@m/Task";
+import type { AuthenticatedRequest } from "@u";
 import type { Request, Response } from "express";
 
 export const getTasks = async (_req: Request, res: Response) => {
@@ -49,3 +50,31 @@ export const deleteTask = async (req: Request, res: Response) => {
 		res.status(404).json({ message: "Task not found" });
 	}
 };
+
+export const completeTask = async (req: Request, res: Response) => {
+	try {
+		const { id } = req.params;
+		const task = await Task.findByIdAndUpdate(
+			id,
+			{ completed: true, completedBy: (req as AuthenticatedRequest).userId },
+			{ new: true },
+		);
+		res.json(task);
+	} catch (error) {
+		res.status(404).json({ message: "Task not found" });
+	}
+}
+
+export const uncompleteTask = async (req: Request, res: Response) => {
+	try {
+		const { id } = req.params;
+		const task = await Task.findByIdAndUpdate(
+			id,
+			{ completed: false, completedBy: null },
+			{ new: true },
+		);
+		res.json(task);
+	} catch (error) {
+		res.status(404).json({ message: "Task not found" });
+	}
+}

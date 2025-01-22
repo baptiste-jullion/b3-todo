@@ -5,7 +5,7 @@ export interface ITaskRead {
 	_id: mongoose.Types.ObjectId;
 	label: string;
 	completed: boolean;
-	completedBy: IUserRead;
+	completedBy?: IUserRead | null;
 }
 
 export type ITaskWrite = string;
@@ -24,6 +24,7 @@ const TaskSchema: Schema = new Schema(
 TaskSchema.pre("findOne", function (next) {
 	this.populate({
 		path: "completedBy",
+		select: "-password"
 	});
 	next();
 });
@@ -31,6 +32,7 @@ TaskSchema.pre("findOne", function (next) {
 TaskSchema.pre("find", function (next) {
 	this.populate({
 		path: "completedBy",
+		select: "-password"
 	});
 	next();
 });

@@ -14,42 +14,6 @@
           />
         </n-form-item>
         <TagsSelectInput v-model="formValue.tags" />
-        <n-form-item label="Cover" path="cover">
-          <n-upload
-            v-if="!formValue.cover"
-            directory-dnd
-            action="#"
-            accept="image/*"
-            @finish="handleFinish"
-            :max="1"
-            :show-file-list="false"
-          >
-            <n-upload-dragger
-              class="flex aspect-video items-center justify-center"
-            >
-              <ImageAdd24Filled class="size-16" />
-            </n-upload-dragger>
-          </n-upload>
-          <div
-            v-else
-            class="relative w-full rounded-sm border border-dashed bg-black/5"
-          >
-            <img
-              class="aspect-video w-full object-cover object-center"
-              :src="formValue.cover"
-            />
-            <n-button
-              class="absolute right-2 top-2"
-              type="error"
-              size="small"
-              @click="formValue.cover = null"
-            >
-              <template #icon>
-                <Delete24Filled />
-              </template>
-            </n-button>
-          </div>
-        </n-form-item>
         <n-form-item
           label="Due Date"
           path="dueDate"
@@ -79,20 +43,17 @@
 
 <script setup lang="ts">
 import type { INoteWrite } from "@b3-todo/api";
-import { Delete24Filled, ImageAdd24Filled } from "@vicons/fluent";
 import { useEventBus, useTimeAgo } from "@vueuse/core";
 import {
   type FormInst,
   NButton,
   NCard,
   NDatePicker,
+  NDynamicInput,
   NForm,
   NFormItem,
   NInput,
   NModal,
-  NUpload,
-  NUploadDragger,
-  NDynamicInput,
   type UploadFileInfo,
   useMessage,
 } from "naive-ui";
@@ -112,14 +73,12 @@ const message = useMessage();
 const defaultValues: INoteWrite = {
   title: "",
   description: "",
-  cover: undefined,
   dueDate: undefined,
-  tasks: [""],
+  tasks: [],
 };
 const rules = {
   title: [{ required: true }],
   description: [{ required: true }],
-  cover: [{ required: false }],
   dueDate: [{ required: false }],
 };
 const formRef = ref<FormInst>();
@@ -132,18 +91,6 @@ const resetForm = () => {
 const timeAgo = useTimeAgo(
   computed(() => formValue.value.dueDate || new Date()),
 );
-
-const handleFinish = ({ file }: { file: Required<UploadFileInfo> }) => {
-  if (file.url) {
-    formValue.value.cover = file.url;
-  } else if (file.file) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      formValue.value.cover = reader.result as string;
-    };
-    reader.readAsDataURL(file.file as Blob);
-  }
-};
 
 const handleValidateClick = (e: MouseEvent) => {
   e.preventDefault();

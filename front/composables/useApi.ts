@@ -2,7 +2,7 @@ import { useNuxtApp } from "#app";
 import type {
 	APIResponseError,
 	APIResponseSuccess,
-} from "@b3-todo/api/dist/client/src/base";
+} from "@b3-todo/api-sdk/src/base";
 import useAuth from "~/composables/useAuth";
 
 export default function useApi() {

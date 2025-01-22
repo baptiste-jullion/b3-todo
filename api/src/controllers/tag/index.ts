@@ -1,5 +1,5 @@
 import Tag, { type ITagWrite } from "@m/Tag";
-import type { TypedRequest } from "@u";
+import  {type TypedRequest, APIError } from "@u";
 import type { Request, Response } from "express";
 
 export const getTags = async (_req: Request, res: Response) => {
@@ -18,9 +18,10 @@ export const getTagById = async (
 	try {
 		const { id } = req.params;
 		const tag = await Tag.findById(id);
+		if (!tag) throw new APIError(404, "Tag not found");
 		res.json(tag);
 	} catch (error) {
-		res.status(404).json({ message: "Tag not found" });
+		APIError.handleError(res, error);
 	}
 };
 

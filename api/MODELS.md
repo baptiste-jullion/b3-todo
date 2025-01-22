@@ -9,7 +9,6 @@ erDiagram
         ObjectId _id PK
         string title
         string description
-        string cover
         string[] tasks
         ObjectId[] tags
         number dueDate

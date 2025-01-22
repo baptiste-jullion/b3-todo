@@ -7,7 +7,7 @@
     embedded
     hoverable
     class="cursor-pointer"
-    @click="showDrawer = true"
+    @click="showDetails = true"
   >
     <n-text class="mb-2 line-clamp-3" :title="note.description">
       {{ note.description }}
@@ -31,17 +31,16 @@
       </n-tag>
     </div>
     <div class="flex items-center justify-between pt-4">
-      <div v-if="note.tasks?.length" class="flex items-center gap-2">
+      <div v-if="tasks" class="flex items-center gap-2">
         <n-progress
           type="circle"
           :offset-degree="180"
           class="!w-4"
           :stroke-width="24"
-          status="success"
+          :status="tasks.isCompleted ? 'success' : 'info'"
           :show-indicator="false"
-          :percentage="tasks.completedPercentage"
+          :percentage="tasks.percentage"
         />
-
         <small>
           <sup>{{ tasks.completed }}</sup
           >/<sub>{{ tasks.total }}</sub> tasks
@@ -59,13 +58,12 @@
         </template>
       </n-avatar-group>
     </div>
-    <NoteDetailsDrawer :note="note" v-model="showDrawer" @updated="refresh" />
+    <note-details :note v-model="showDetails" @updated="refresh"  />
   </n-card>
 </template>
 
 <script setup lang="ts">
-import { useAsyncData } from "#app";
-import type { INoteRead } from "@b3-todo/api";
+import type { INoteRead } from "@b3-todo/api-sdk";
 import { Clock24Regular } from "@vicons/fluent";
 import { useTimeAgo } from "@vueuse/core";
 import { toSvg } from "jdenticon";
@@ -80,10 +78,13 @@ import {
   NTooltip,
 } from "naive-ui";
 import { computed, ref } from "vue";
-import NoteDetailsDrawer from "~/components/Note/DetailsDrawer.vue";
+import NoteDetails from "~/components/Note/Details.vue";
 import useApi from "~/composables/useApi";
+import useUtils from "~/composables/useUtils";
+import { useAsyncData } from "#app";
 
 const { api, handleAPIResponse } = useApi();
+const { calculatePercentage } = useUtils();
 
 const { noteId } = defineProps<{
   noteId: INoteRead["_id"];
@@ -95,30 +96,36 @@ const { data: note, refresh } = await useAsyncData(noteId, async () =>
 );
 
 const timeAgo = useTimeAgo(computed(() => note.value?.dueDate || new Date()));
-const tasks = computed(() => {
-  const res = {
-    completed: note.value?.tasks?.filter((task) => task.completed).length || 0,
-    total: note.value?.tasks?.length || 0,
-    completedPercentage: 0,
-  };
+const tasks = computed(() =>
+  calculatePercentage(note.value?.tasks, "completed"),
+);
 
-  res.completedPercentage = (res.completed / res.total) * 100;
-
-  return res;
-});
-
-const showDrawer = ref(false);
+const showDetails = ref(false);
 
 const getAvatarUrl = (src: string) => {
   return `data:image/svg+xml,${encodeURIComponent(toSvg(src, 32))}`;
 };
 
 const users = computed(() => {
-  return [
+  const u = [
     {
       name: note.value?.author?.username,
       src: getAvatarUrl(note.value?.author.username || ""),
     },
   ];
+
+  if (!note.value?.tasks) return u;
+  for (const task of note.value.tasks) {
+    if (task.completedBy) {
+      u.push({
+        name: task.completedBy.username,
+        src: getAvatarUrl(task.completedBy.username),
+      });
+    }
+  }
+
+  return Array.from(new Set(u.map((u) => u.name))).map((name) =>
+    u.find((u) => u.name === name),
+  );
 });
 </script>
